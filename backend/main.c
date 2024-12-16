@@ -4,83 +4,129 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <unistd.h>
-#include <stdbool.h>
+#include <arpa/inet.h>
 
 #define PORT 8080
 #define BUFFER_SIZE 1024
 
-int main() {
-    int server_fd, new_socket;
-    struct sockaddr_in address;
-    int addrlen = sizeof(address);
-    char buffer[BUFFER_SIZE] = {0};
-    bool server_running = true;
+// Response Messages
+const char* RESPONSE_OK = "200 OK\n";
+const char* RESPONSE_BAD_REQUEST = "400 Bad Request\n";
+const char* RESPONSE_NOT_FOUND = "404 Not Found\n";
+const char* RESPONSE_DISCONNECT = "499 Client Disconnected\n";
 
-    // Create socket
-    server_fd = socket(AF_INET, SOCK_STREAM, 0);
+// Function prototypes
+int create_server_socket(int port);
+void handle_client(int client_socket);
+void handle_request(int client_socket, const char* request);
+void handle_get(int client_socket, const char* content);
+void handle_post(int client_socket, const char* content);
+void handle_action(int client_socket, const char* content);
+
+int create_server_socket(int port) {
+    int server_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (server_fd < 0) {
         perror("[ERROR] Socket creation failed");
         exit(EXIT_FAILURE);
     }
 
-    // Configure socket parameters
+    struct sockaddr_in address;
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
-    address.sin_port = htons(PORT);
+    address.sin_port = htons(port);
 
-    // Bind socket to port
-    if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0) {
-        perror("Bind failed");
+    if (bind(server_fd, (struct sockaddr*)&address, sizeof(address)) < 0) {
+        perror("[ERROR] Bind failed");
+        close(server_fd);
         exit(EXIT_FAILURE);
     }
 
-    // Listen for connections
     if (listen(server_fd, 3) < 0) {
-        perror("Listen failed");
+        perror("[ERROR] Listen failed");
+        close(server_fd);
         exit(EXIT_FAILURE);
     }
 
-    printf("Server listening on port %d\n", PORT);
+    printf("[INFO] Server listening on port %d\n", port);
+    return server_fd;
+}
 
-    while (server_running) {
-        // Accept incoming connection
-        new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen);
-        if (new_socket < 0) {
-            perror("Accept failed");
+void handle_get(int client_socket, const char* content) {
+    printf("[INFO] Handling GET request. Content: %s\n", content);
+    send(client_socket, RESPONSE_OK, strlen(RESPONSE_OK), 0);
+}
+
+void handle_post(int client_socket, const char* content) {
+    printf("[INFO] Handling POST request. Content: %s\n", content);
+    send(client_socket, RESPONSE_OK, strlen(RESPONSE_OK), 0);
+}
+
+void handle_action(int client_socket, const char* content) {
+    if (strcmp(content, "disconnect") == 0) {
+        printf("[INFO] Action: Disconnect\n");
+        send(client_socket, RESPONSE_DISCONNECT, strlen(RESPONSE_DISCONNECT), 0);
+    } else {
+        printf("[INFO] Action: %s\n", content);
+        send(client_socket, RESPONSE_OK, strlen(RESPONSE_OK), 0);
+    }
+}
+
+void handle_request(int client_socket, const char* request) {
+    if (strncmp(request, "<g>", 3) == 0) {
+        handle_get(client_socket, request + 3);
+    } else if (strncmp(request, "<p>", 3) == 0) {
+        handle_post(client_socket, request + 3);
+    } else if (strncmp(request, "<a>", 3) == 0) {
+        handle_action(client_socket, request + 3);
+    } else {
+        printf("[ERROR] Invalid request format\n");
+        send(client_socket, RESPONSE_BAD_REQUEST, strlen(RESPONSE_BAD_REQUEST), 0);
+    }
+}
+
+void handle_client(int client_socket) {
+    char buffer[BUFFER_SIZE] = {0};
+
+    while (1) {
+        memset(buffer, 0, BUFFER_SIZE);
+        int bytes_read = read(client_socket, buffer, BUFFER_SIZE);
+
+        if (bytes_read <= 0) {
+            printf("[INFO] Client disconnected\n");
+            break;
+        }
+
+        printf("[INFO] Received: %s\n", buffer);
+
+        handle_request(client_socket, buffer);
+
+        if (strncmp(buffer, "<a>disconnect", 12) == 0) {
+            printf("[INFO] Disconnecting client\n");
+            break;
+        }
+    }
+
+    close(client_socket);
+    printf("[INFO] Connection closed\n");
+}
+
+int main() {
+    int server_socket = create_server_socket(PORT);
+
+    while (1) {
+        struct sockaddr_in client_addr;
+        socklen_t client_addr_len = sizeof(client_addr);
+        int client_socket = accept(server_socket, (struct sockaddr*)&client_addr, &client_addr_len);
+
+        if (client_socket < 0) {
+            perror("[ERROR] Accept failed");
             continue;
         }
 
-        printf("[CON] New client connected\n");
-
-        // Handle client connection
-        while (1) {
-            memset(buffer, 0, BUFFER_SIZE);
-            int valread = read(new_socket, buffer, BUFFER_SIZE);
-            
-            if (valread <= 0) {
-                printf("[CON] Connection closed by client\n");
-                break;
-            }
-
-            printf("[CLIENT] Received: %s\n", buffer);
-
-            // Command example
-            if (strcmp(buffer, "close") == 0) {
-                printf("[CLIENT] Closing manually\n");
-                break;
-            }
-
-            // exemple réponse
-            char *response = "ACK\n";
-            send(new_socket, response, strlen(response), 0);
-        }
-
-        // Close the client socket
-        close(new_socket);
+        handle_client(client_socket);
     }
 
-    // Close server socket
-    close(server_fd);
-
+    close(server_socket);
+    printf("[INFO] Server socket closed\n");
     return 0;
 }
