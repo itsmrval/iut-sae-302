@@ -2,7 +2,7 @@ import socket
 
 # Define server address and port
 SERVER_IP = "127.0.0.1"
-SERVER_PORT = 8080
+SERVER_PORT = 8081
 
 def interactive_terminal():
     print(f"Connecting to server at {SERVER_IP}:{SERVER_PORT}...")
@@ -25,8 +25,9 @@ def interactive_terminal():
                 # Send the input to the server
                 client_socket.sendall(user_input.encode())
                 
+                # Receive and display the server's response
                 response = client_socket.recv(1024).decode()
-                print(f"[SERVER RESPONSE]\n{response}")
+                print(f"[SERVER RESPONSE]\n{response}\n")
                 
                 if "499" in response.lower():
                     print("[INFO] Server requested disconnect. Closing connection...")
