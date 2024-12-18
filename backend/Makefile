@@ -1,14 +1,20 @@
-CC=gcc
-FLAGS= -Wall
-EXEC= 	backendC
+# Makefile
+
+CC = gcc
+CFLAGS = -Wall -Wextra -std=c11
+SRC = src/main.c src/utils.c src/student.c src/seance.c src/attendance.c
+OBJ = $(SRC:.c=.o)
+EXEC = server
+
+all: $(EXEC)
+
+$(EXEC): $(OBJ)
+	$(CC) $(CFLAGS) -o $@ $^
 
 %.o: %.c
-	$(CC) $(FLAGS) -c $<
+	$(CC) $(CFLAGS) -c $< -o $@
 
-backendC: main.o
-	$(CC) $(LIBS) $(FLAGS) -o $@ $^
+clean:
+	rm -f src/*.o $(EXEC)
 
-all : $(EXEC)
-
-clean :
-	rm *.o
+.PHONY: all clean
