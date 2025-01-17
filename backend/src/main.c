@@ -152,7 +152,7 @@ void handle_get(int client_socket, const char* content) {
         if (sscanf(content + 8, "%d", &id) == 1) {
             char name[100];
             if (get_student(id, name)) {
-                snprintf(response, sizeof(response), "202/id:%d,name:%s\n", id, name);
+                snprintf(response, sizeof(response), "202/id:%d,name:%s", id, name);
                 send(client_socket, response, strlen(response), 0);
             } else {
                 send(client_socket, RESPONSE_ERROR, strlen(RESPONSE_ERROR), 0);
@@ -160,7 +160,7 @@ void handle_get(int client_socket, const char* content) {
         } else {
             char list[BUFFER_SIZE] = "";
             if (get_student_list(list)) {
-                snprintf(response, sizeof(response), "202/%s\n", list);
+                snprintf(response, sizeof(response), "202/%s", list);
                 send(client_socket, response, strlen(response), 0);
             } else {
                 send(client_socket, RESPONSE_ERROR, strlen(RESPONSE_ERROR), 0);
@@ -172,7 +172,7 @@ void handle_get(int client_socket, const char* content) {
             char name[100];
             int unix_time;
             if (get_seance(id, name, &unix_time)) {
-                snprintf(response, sizeof(response), "202/id:%d,name:%s,unix_time:%d\n", id, name, unix_time);
+                snprintf(response, sizeof(response), "202/id:%d,name:%s,unix_time:%d", id, name, unix_time);
                 send(client_socket, response, strlen(response), 0);
             } else {
                 send(client_socket, RESPONSE_BAD_REQUEST, strlen(RESPONSE_BAD_REQUEST), 0);
@@ -180,7 +180,7 @@ void handle_get(int client_socket, const char* content) {
         } else {
             char list[BUFFER_SIZE] = "";
             if (get_seance_list(list)) {
-                snprintf(response, sizeof(response), "202/%s\n", list);
+                snprintf(response, sizeof(response), "202/%s", list);
                 send(client_socket, response, strlen(response), 0);
             } else {
                 send(client_socket, RESPONSE_ERROR, strlen(RESPONSE_ERROR), 0);
@@ -191,7 +191,7 @@ void handle_get(int client_socket, const char* content) {
         if (sscanf(content + 11, "%d/%d", &id_seance, &id_student) == 2) {
             int status;
             if (get_attendance(id_seance, id_student, &status)) {
-                snprintf(response, sizeof(response), "202/seance_id:%d,student_id:%d,status:%d\n", id_seance, id_student, status);
+                snprintf(response, sizeof(response), "202/seance_id:%d,student_id:%d,status:%d", id_seance, id_student, status);
                 send(client_socket, response, strlen(response), 0);
             } else {
                 send(client_socket, RESPONSE_ERROR, strlen(RESPONSE_ERROR), 0);
@@ -220,7 +220,7 @@ void handle_post(int client_socket, const char* content) {
 
             if (add_student(&student)) {
                 char response[BUFFER_SIZE];
-                snprintf(response, sizeof(response), "202/id:%d,name:%s\n", student.id, student.name);
+                snprintf(response, sizeof(response), "202/id:%d,name:%s", student.id, student.name);
                 send(client_socket, response, strlen(response), 0);
             } else {
                 send(client_socket, RESPONSE_BAD_REQUEST, strlen(RESPONSE_BAD_REQUEST), 0);
@@ -244,8 +244,6 @@ void handle_post(int client_socket, const char* content) {
         int unix_time;
         char name[256];
 
-        printf("Incoming seance request: %s\n", content);
-
         if (sscanf(content + 7, "%255[^/]/%d", name, &unix_time) == 2) {
             Seance seance;
             seance.id = 0; 
@@ -261,7 +259,7 @@ void handle_post(int client_socket, const char* content) {
 
             if (add_seance(&seance)) {
                 char response[BUFFER_SIZE];
-                snprintf(response, sizeof(response), "202/id:%d,name:%s\n", seance.id, seance.name);
+                snprintf(response, sizeof(response), "202/id:%d,name:%s", seance.id, seance.name);
                 send(client_socket, response, strlen(response), 0);
             } else {
                 send(client_socket, RESPONSE_BAD_REQUEST, strlen(RESPONSE_BAD_REQUEST), 0);
