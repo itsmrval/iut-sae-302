@@ -1,4 +1,3 @@
-// utils.c
 #include "utils.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -55,6 +54,5 @@ bool init_db() {
 // Signal handler for graceful shutdown
 void handle_sigint() {
     printf("\n[INFO] Caught SIGINT signal. Shutting down gracefully...\n");
-    // Perform any necessary cleanup here
     exit(0);
 }
