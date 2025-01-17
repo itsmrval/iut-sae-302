@@ -1,7 +1,7 @@
 # Makefile
 
 CC = gcc
-CFLAGS = -Wall -Wextra -std=c11
+CFLAGS = -Wall -Wextra -std=c11 -g
 SRC = src/main.c src/utils.c src/student.c src/seance.c src/attendance.c
 OBJ = $(SRC:.c=.o)
 EXEC = server

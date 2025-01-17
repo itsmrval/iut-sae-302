@@ -32,6 +32,10 @@ void handle_client(int client_socket, struct sockaddr_in client_addr);
 void handle_get(int client_socket, const char* content);
 void handle_post(int client_socket, const char* content);
 void handle_action(int client_socket, const char* content);
+void handle_delete(int client_socket, const char* content);
+void initialize_server();
+void cleanup_and_exit();
+
 
 int main() {
     // Initialize the database
@@ -41,23 +45,44 @@ int main() {
     }
 
     // Setup signal handler for graceful shutdown
-    signal(SIGINT, handle_sigint);
+    signal(SIGINT, cleanup_and_exit);
 
-    // Create server socket
+    // Initialize server
+    initialize_server();
+
+    // Server loop
+    while (1) {
+        struct sockaddr_in address;
+        socklen_t addrlen = sizeof(address);
+        int client_socket = accept(server_socket, (struct sockaddr*)&address, &addrlen);
+        if (client_socket < 0) {
+            perror("[ERROR] Accept failed");
+            continue;
+        }
+
+        handle_client(client_socket, address);
+    }
+
+    return 0;
+}
+
+// Function to initialize the server
+void initialize_server() {
     server_socket = socket(AF_INET, SOCK_STREAM, 0);
-    if (server_socket == 0) {
+    if (server_socket < 0) {
         perror("[ERROR] Socket creation failed");
         exit(EXIT_FAILURE);
     }
 
-    // Bind the socket to the port
-    struct sockaddr_in address;
     int opt = 1;
-    if (setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt))) {
-        perror("[ERROR] setsockopt");
+    if (setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) {
+        perror("[ERROR] setsockopt failed");
         close(server_socket);
         exit(EXIT_FAILURE);
     }
+
+    struct sockaddr_in address;
+
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(PORT);
@@ -68,7 +93,6 @@ int main() {
         exit(EXIT_FAILURE);
     }
 
-    // Start listening
     if (listen(server_socket, 3) < 0) {
         perror("[ERROR] Listen failed");
         close(server_socket);
@@ -76,20 +100,6 @@ int main() {
     }
 
     printf("[INFO] Server is listening on port %d...\n", PORT);
-
-    // Server loop
-    while (1) {
-        int addrlen = sizeof(address);
-        int client_socket = accept(server_socket, (struct sockaddr*)&address, (socklen_t*)&addrlen);
-        if (client_socket < 0) {
-            perror("[ERROR] Accept failed");
-            continue;
-        }
-
-        handle_client(client_socket, address);
-    }
-
-    return 0;
 }
 
 // Function to handle each client connection
@@ -103,8 +113,7 @@ void handle_client(int client_socket, struct sockaddr_in client_addr) {
     while (1) {
         memset(buffer, 0, BUFFER_SIZE);
         int bytes_read = recv(client_socket, buffer, BUFFER_SIZE - 1, 0);
-
-        if (bytes_read <= 0) { 
+        if (bytes_read <= 0) {
             printf("[%s] Disconnected\n", client_ip);
             break;
         }
@@ -120,16 +129,16 @@ void handle_request(int client_socket, const char* request, const char* client_i
     if (strncmp(request, "<g>", 3) == 0) {
         printf("[%s] GET Request: %s\n", client_ip, request + 3);
         handle_get(client_socket, request + 3);
-    }
-    else if (strncmp(request, "<p>", 3) == 0) {
+    } else if (strncmp(request, "<p>", 3) == 0) {
         printf("[%s] POST Request: %s\n", client_ip, request + 3);
         handle_post(client_socket, request + 3);
-    }
-    else if (strncmp(request, "<a>", 3) == 0) {
+    } else if (strncmp(request, "<a>", 3) == 0) {
         printf("[%s] ACTION Request: %s\n", client_ip, request + 3);
         handle_action(client_socket, request + 3);
-    }
-    else {
+    } else if (strncmp(request, "<d>", 3) == 0) {
+        printf("[%s] DELETE Request: %s\n", client_ip, request + 3);
+        handle_delete(client_socket, request + 3);
+    } else {
         printf("[%s] Invalid request format: %s\n", client_ip, request);
         send(client_socket, RESPONSE_BAD_REQUEST, strlen(RESPONSE_BAD_REQUEST), 0);
     }
@@ -147,42 +156,39 @@ void handle_get(int client_socket, const char* content) {
                 send(client_socket, response, strlen(response), 0);
             } else {
                 send(client_socket, RESPONSE_ERROR, strlen(RESPONSE_ERROR), 0);
-
             }
         } else {
-            char list[BUFFER_SIZE];
+            char list[BUFFER_SIZE] = "";
             if (get_student_list(list)) {
                 snprintf(response, sizeof(response), "202/%s\n", list);
                 send(client_socket, response, strlen(response), 0);
             } else {
                 send(client_socket, RESPONSE_ERROR, strlen(RESPONSE_ERROR), 0);
-            }        
+            }
         }
-    }
-    else if (strncmp(content, "seance", 6) == 0) {
+    } else if (strncmp(content, "seance", 6) == 0) {
         int id;
         if (sscanf(content + 7, "%d", &id) == 1) {
             char name[100];
-            if (get_seance(id, name, NULL)) {
-                snprintf(response, sizeof(response), "202/id:%d,name:%s\n", id, name);
+            int unix_time;
+            if (get_seance(id, name, &unix_time)) {
+                snprintf(response, sizeof(response), "202/id:%d,name:%s,unix_time:%d\n", id, name, unix_time);
                 send(client_socket, response, strlen(response), 0);
             } else {
                 send(client_socket, RESPONSE_BAD_REQUEST, strlen(RESPONSE_BAD_REQUEST), 0);
             }
         } else {
-            char list[BUFFER_SIZE];
+            char list[BUFFER_SIZE] = "";
             if (get_seance_list(list)) {
                 snprintf(response, sizeof(response), "202/%s\n", list);
                 send(client_socket, response, strlen(response), 0);
             } else {
                 send(client_socket, RESPONSE_ERROR, strlen(RESPONSE_ERROR), 0);
-            }        
+            }
         }
-    }
-    else if (strncmp(content, "attendance", 10) == 0) {
+    } else if (strncmp(content, "attendance", 10) == 0) {
         int id_student, id_seance;
         if (sscanf(content + 11, "%d/%d", &id_seance, &id_student) == 2) {
-
             int status;
             if (get_attendance(id_seance, id_student, &status)) {
                 snprintf(response, sizeof(response), "202/seance_id:%d,student_id:%d,status:%d\n", id_seance, id_student, status);
@@ -191,10 +197,9 @@ void handle_get(int client_socket, const char* content) {
                 send(client_socket, RESPONSE_ERROR, strlen(RESPONSE_ERROR), 0);
             }
         } else {
-            send(client_socket, RESPONSE_BAD_REQUEST, strlen(RESPONSE_BAD_REQUEST), 0);  
+            send(client_socket, RESPONSE_BAD_REQUEST, strlen(RESPONSE_BAD_REQUEST), 0);
         }
-    }
-    else {
+    } else {
         send(client_socket, RESPONSE_BAD_REQUEST, strlen(RESPONSE_BAD_REQUEST), 0);
     }
 }
@@ -202,11 +207,62 @@ void handle_get(int client_socket, const char* content) {
 // Function to handle POST requests
 void handle_post(int client_socket, const char* content) {
     if (strncmp(content, "student/", 8) == 0) {
-        int id;
         char name[100];
-        if (sscanf(content + 8, "%d/%99[^/\n]", &id, name) == 2) {
-            if (add_student(id, name)) {
+        if (sscanf(content + 8, "%99[^/\n]", name) == 1) {
+            Student student;
+            student.id = 0; // Start with 0 and increment to find the next available ID
+            char existing_name[100];
+            while (get_student(student.id, existing_name)) {
+                student.id++;
+            }
+            strncpy(student.name, name, sizeof(student.name) - 1);
+            student.name[sizeof(student.name) - 1] = '\0'; // Ensure null termination
+
+            if (add_student(&student)) {
+                char response[BUFFER_SIZE];
+                snprintf(response, sizeof(response), "202/id:%d,name:%s\n", student.id, student.name);
+                send(client_socket, response, strlen(response), 0);
+            } else {
+                send(client_socket, RESPONSE_BAD_REQUEST, strlen(RESPONSE_BAD_REQUEST), 0);
+            }
+        } else {
+            send(client_socket, RESPONSE_BAD_REQUEST, strlen(RESPONSE_BAD_REQUEST), 0);
+        }
+    } else if (strncmp(content, "attendance/", 11) == 0) {
+        int seance_id, student_id, status;
+        if (sscanf(content + 11, "%d/%d/%d", &seance_id, &student_id, &status) == 3) {
+            Attendance attendance = {seance_id, student_id, status};
+            if (set_attendance(&attendance)) {
                 send(client_socket, RESPONSE_OK, strlen(RESPONSE_OK), 0);
+            } else {
+                send(client_socket, RESPONSE_ERROR, strlen(RESPONSE_ERROR), 0);
+            }
+        } else {
+            send(client_socket, RESPONSE_BAD_REQUEST, strlen(RESPONSE_BAD_REQUEST), 0);
+        }
+    } else if (strncmp(content, "seance/", 7) == 0) {
+        int unix_time;
+        char name[256];
+
+        printf("Incoming seance request: %s\n", content);
+
+        if (sscanf(content + 7, "%255[^/]/%d", name, &unix_time) == 2) {
+            Seance seance;
+            seance.id = 0; 
+
+            char existing_name[100];
+            while (get_seance(seance.id, existing_name, NULL)) {
+                seance.id++;
+            }
+
+            strncpy(seance.name, name, sizeof(seance.name) - 1);
+            seance.name[sizeof(seance.name) - 1] = '\0';
+            seance.unix_time = unix_time;
+
+            if (add_seance(&seance)) {
+                char response[BUFFER_SIZE];
+                snprintf(response, sizeof(response), "202/id:%d,name:%s\n", seance.id, seance.name);
+                send(client_socket, response, strlen(response), 0);
             } else {
                 send(client_socket, RESPONSE_BAD_REQUEST, strlen(RESPONSE_BAD_REQUEST), 0);
             }
@@ -214,49 +270,53 @@ void handle_post(int client_socket, const char* content) {
             send(client_socket, RESPONSE_BAD_REQUEST, strlen(RESPONSE_BAD_REQUEST), 0);
         }
     }
-    else if (strncmp(content, "attendance/", 11) == 0) {
-        int seance_id, student_id, status;
-
-        if (sscanf(content + 11, "%d/%d/%d", &seance_id, &student_id, &status) == 3) {
-            if (set_attendance(seance_id, student_id, status)) {
-                send(client_socket, RESPONSE_OK, strlen(RESPONSE_OK), 0);
-            } else {
-                send(client_socket, RESPONSE_ERROR, strlen(RESPONSE_ERROR), 0);
-            }
-        } else {
-            send(client_socket, RESPONSE_BAD_REQUEST, strlen(RESPONSE_BAD_REQUEST), 0);
-        }
-    }
-    else if (strncmp(content, "seance/", 7) == 0) {
-        int id, unix_time;
-        char name[256];
-
-        if (sscanf(content + 7, "%d/%255[^/]/%d", &id, name, &unix_time) == 3) {
-            if (add_seance(id, name, unix_time)) {
-                send(client_socket, RESPONSE_OK, strlen(RESPONSE_OK), 0);
-            } else {
-                send(client_socket, RESPONSE_ERROR, strlen(RESPONSE_ERROR), 0);
-            }
-        } else {
-            send(client_socket, RESPONSE_BAD_REQUEST, strlen(RESPONSE_BAD_REQUEST), 0);
-        }
-}
-
 }
 
 // Function to handle ACTION requests
 void handle_action(int client_socket, const char* content) {
     if (strcmp(content, "disconnect") == 0) {
         send(client_socket, RESPONSE_DISCONNECTED, strlen(RESPONSE_DISCONNECTED), 0);
-    }
-    else if (strcmp(content, "close") == 0) {
+    } else if (strcmp(content, "close") == 0) {
         send(client_socket, RESPONSE_CLOSED, strlen(RESPONSE_CLOSED), 0);
-        close(client_socket);
-        close(server_socket); // Close the server socket
-        printf("[INFO] Server is closing as per request.\n");
-        exit(0);
-    }
-    else {
+        cleanup_and_exit();
+    } else {
         send(client_socket, RESPONSE_BAD_REQUEST, strlen(RESPONSE_BAD_REQUEST), 0);
     }
+}
+
+// Function to handle DELETE requests
+void handle_delete(int client_socket, const char* content) {
+    if (strncmp(content, "student/", 8) == 0) {
+        int id;
+        if (sscanf(content + 8, "%d", &id) == 1) {
+            if (delete_student(id)) {
+                send(client_socket, RESPONSE_OK, strlen(RESPONSE_OK), 0);
+            } else {
+                send(client_socket, RESPONSE_BAD_REQUEST, strlen(RESPONSE_BAD_REQUEST), 0);
+            }
+        } else {
+            send(client_socket, RESPONSE_BAD_REQUEST, strlen(RESPONSE_BAD_REQUEST), 0);
+        }
+    } else if (strncmp(content, "seance/", 7) == 0) {
+        int id;
+        if (sscanf(content + 7, "%d", &id) == 1) {
+            if (delete_seance(id)) {
+                send(client_socket, RESPONSE_OK, strlen(RESPONSE_OK), 0);
+            } else {
+                send(client_socket, RESPONSE_BAD_REQUEST, strlen(RESPONSE_BAD_REQUEST), 0);
+            }
+        } else {
+            send(client_socket, RESPONSE_BAD_REQUEST, strlen(RESPONSE_BAD_REQUEST), 0);
+        }
+    } else {
+        send(client_socket, RESPONSE_BAD_REQUEST, strlen(RESPONSE_BAD_REQUEST), 0);
+    }
+}
+
+
+// Cleanup function for graceful shutdown
+void cleanup_and_exit() {
+    close(server_socket);
+    printf("[INFO] Server is shutting down...\n");
+    exit(0);
 }
