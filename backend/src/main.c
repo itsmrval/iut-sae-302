@@ -36,6 +36,7 @@ void handle_delete(int client_socket, const char* content);
 void initialize_server();
 void cleanup_and_exit();
 
+
 int main() {
     // Initialize the database
     if (!init_db()) {
@@ -81,6 +82,7 @@ void initialize_server() {
     }
 
     struct sockaddr_in address;
+
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(PORT);
@@ -111,7 +113,6 @@ void handle_client(int client_socket, struct sockaddr_in client_addr) {
     while (1) {
         memset(buffer, 0, BUFFER_SIZE);
         int bytes_read = recv(client_socket, buffer, BUFFER_SIZE - 1, 0);
-
         if (bytes_read <= 0) {
             printf("[%s] Disconnected\n", client_ip);
             break;

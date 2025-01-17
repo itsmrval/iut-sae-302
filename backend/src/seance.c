@@ -20,11 +20,10 @@ bool add_seance(Seance* seance) {
 
     // Append new seance with proper formatting
     fprintf(file, "%d,%s,%d\n", seance->id, seance->name, seance->unix_time);
+    
     fclose(file);
     return true;
 }
-
-
 
 bool get_seance(int id, char* name_buffer, int* unix_time) {
     FILE *file = fopen(SEANCES_FILE, "r");
@@ -40,6 +39,7 @@ bool get_seance(int id, char* name_buffer, int* unix_time) {
             // Write only if buffers are valid
             if (name_buffer) strncpy(name_buffer, temp_name, 100);
             if (unix_time) *unix_time = temp_time;
+
             fclose(file);
             return true;
         }
@@ -48,7 +48,6 @@ bool get_seance(int id, char* name_buffer, int* unix_time) {
     fclose(file);
     return false;
 }
-
 
 bool get_seance_list(char* result) {
     FILE *file = fopen(SEANCES_FILE, "r");
@@ -101,3 +100,4 @@ bool delete_seance(int id) {
 
     return found;
 }
+

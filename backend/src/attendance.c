@@ -22,6 +22,7 @@ bool get_attendance(int seance_id, int student_id, int* status) {
         if (sscanf(line, "%d,%d,%d", &current_seance_id, &current_student_id, &current_status) == 3) {
             if (current_seance_id == seance_id && current_student_id == student_id) {
                 *status = current_status;
+
                 fclose(file);
                 return true;
             }
