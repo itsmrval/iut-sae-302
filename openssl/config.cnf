@@ -1,0 +1,21 @@
+[ req ]
+default_bits       = 4096
+distinguished_name = req_distinguished_name
+req_extensions     = v3_req
+prompt             = no
+
+[ req_distinguished_name ]
+C  = FR
+ST = France
+L  = Paris
+O  = IUT
+OU = Vélizy
+CN = localhost
+
+[ v3_req ]
+keyUsage = critical, digitalSignature, keyEncipherment
+extendedKeyUsage = serverAuth
+subjectAltName = @alt_names
+
+[ alt_names ]
+DNS.1 = localhost

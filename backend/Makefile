@@ -1,20 +1,26 @@
-# Makefile
-
 CC = gcc
-CFLAGS = -Wall -Wextra -std=c11 -g
-SRC = src/main.c src/utils.c src/student.c src/seance.c src/attendance.c
-OBJ = $(SRC:.c=.o)
+
+CFLAGS = -Wall -g
+
+OPENSSL_CFLAGS = -I$(shell brew --prefix openssl)/include
+OPENSSL_LIBS = -L$(shell brew --prefix openssl)/lib -lssl -lcrypto
+
+# Update the source file paths to include the src/ directory
+SRCS = src/main.c src/utils.c src/student.c src/attendance.c src/seance.c src/openssl.c
+
+OBJS = $(SRCS:.c=.o)
+
 EXEC = server
 
 all: $(EXEC)
 
-$(EXEC): $(OBJ)
-	$(CC) $(CFLAGS) -o $@ $^
+$(EXEC): $(OBJS)
+	$(CC) -o $@ $^ $(OPENSSL_LIBS)
 
 %.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) $(OPENSSL_CFLAGS) -c $< -o $@
 
 clean:
-	rm -f src/*.o $(EXEC)
+	rm -f $(OBJS) $(EXEC)
 
 .PHONY: all clean
