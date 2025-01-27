@@ -5,7 +5,6 @@ import ssl
 from datetime import datetime
 import time
 from tkcalendar import Calendar
-
 class SSLSocket:
     def __init__(self):
         # Create SSL context
@@ -67,7 +66,6 @@ class TimeSelector(tk.Frame):
         now = datetime.now()
         self.hour.set(now.hour)
         self.minute.set(now.minute)
-
     def get_timestamp(self):
         try:
             selected_date = self.calendar.get_date()
@@ -86,21 +84,49 @@ class ClientApp:
         
         master.grid_rowconfigure(1, weight=1)
         master.grid_columnconfigure(0, weight=1)
+        
+        self.show_connection_dialog()
 
+    def show_connection_dialog(self):
+        # Clear any existing widgets
+        for widget in self.master.winfo_children():
+            widget.destroy()
+            
+        frame = tk.Frame(self.master)
+        frame.place(relx=0.5, rely=0.5, anchor="center")
+        
+        tk.Label(frame, text="IP Address:").pack(pady=(20,5))
+        ip_entry = tk.Entry(frame)
+        ip_entry.insert(0, "127.0.0.1")
+        ip_entry.pack()
+        
+        tk.Label(frame, text="Port:").pack(pady=(10,5))
+        port_entry = tk.Entry(frame)
+        port_entry.insert(0, "8081")
+        port_entry.pack()
+        
+        def connect():
+            try:
+                port = int(port_entry.get())
+                if port < 0 or port > 65535:
+                    raise ValueError
+                self.initialize_connection(ip_entry.get(), port)
+            except ValueError:
+                messagebox.showerror("Error", "Invalid port number")
+        
+        tk.Button(frame, text="Connect", command=connect).pack(pady=20)
+
+    def initialize_connection(self, ip, port):
         self.seance_ids = []
         self.student_ids = []
-
-        # Initialize SSL socket
-        self.socket = SSLSocket()
-        if not self.socket.connect('127.0.0.1', 8081):
-            master.destroy()
-            return
-
-        self.create_home_page()
         
-        # Setup cleanup on window close
-        master.protocol("WM_DELETE_WINDOW", self.on_closing)
-
+        self.socket = SSLSocket()
+        if not self.socket.connect(ip, port):
+            self.master.destroy()
+            return
+            
+        self.create_home_page()
+        self.master.protocol("WM_DELETE_WINDOW", self.on_closing)
     def on_closing(self):
         try:
             # Send disconnect request before closing
@@ -372,7 +398,6 @@ class ClientApp:
             widget.destroy()
         self.master.grid_rowconfigure(1, weight=1)
         self.master.grid_columnconfigure(0, weight=1)
-
 
 if __name__ == "__main__":
     root = tk.Tk()
