@@ -4,6 +4,8 @@
 
 #define SEANCES_FILE "data/seances.csv"
 
+bool delete_seance_attendance(int id);
+
 bool add_seance(Seance* seance) {
     FILE *file = fopen(SEANCES_FILE, "a+");
     if (!file) return false;
@@ -97,6 +99,7 @@ bool delete_seance(int id) {
 
     remove(SEANCES_FILE);
     rename("data/temp_seances.csv", SEANCES_FILE);
+    delete_seance_attendance(id);
 
     return found;
 }

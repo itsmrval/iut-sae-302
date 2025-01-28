@@ -55,3 +55,63 @@ bool get_attendance(int seance_id, int student_id, int* status) {
     fclose(file);
     return true;
 }
+
+// delete all attendance records for a given seance
+bool delete_seance_attendance(int seance_id) {
+    FILE *file = fopen(ATTENDANCE_FILE, "r+");
+    if (!file) return false;
+
+    FILE *temp = fopen("data/temp.csv", "w");
+    if (!temp) {
+        fclose(file);
+        return false;
+    }
+
+    char line[256];
+    while (fgets(line, sizeof(line), file)) {
+        int current_seance_id;
+        if (sscanf(line, "%d,", &current_seance_id) == 1) {
+            if (current_seance_id != seance_id) {
+                fprintf(temp, "%s", line);
+            }
+        }
+    }
+
+    fclose(file);
+    fclose(temp);
+
+    remove(ATTENDANCE_FILE);
+    rename("data/temp.csv", ATTENDANCE_FILE);
+
+    return true;
+}
+
+// delete all attendance records for a given student
+bool delete_student_attendance(int student_id) {
+    FILE *file = fopen(ATTENDANCE_FILE, "r+");
+    if (!file) return false;
+
+    FILE *temp = fopen("data/temp.csv", "w");
+    if (!temp) {
+        fclose(file);
+        return false;
+    }
+
+    char line[256];
+    while (fgets(line, sizeof(line), file)) {
+        int current_student_id;
+        if (sscanf(line, ",%d,", &current_student_id) == 1) {
+            if (current_student_id != student_id) {
+                fprintf(temp, "%s", line);
+            }
+        }
+    }
+
+    fclose(file);
+    fclose(temp);
+
+    remove(ATTENDANCE_FILE);
+    rename("data/temp.csv", ATTENDANCE_FILE);
+
+    return true;
+}

@@ -4,6 +4,9 @@
 
 #define STUDENTS_FILE "data/students.csv"
 
+
+bool delete_student_attendance(int id);
+
 bool add_student(Student* student) {
     FILE *file = fopen(STUDENTS_FILE, "a+");
     if (!file) return false;
@@ -86,6 +89,7 @@ bool delete_student(int id) {
 
     remove(STUDENTS_FILE);
     rename("data/temp_students.csv", STUDENTS_FILE);
+    delete_student_attendance(id);
 
     return found;
 }
