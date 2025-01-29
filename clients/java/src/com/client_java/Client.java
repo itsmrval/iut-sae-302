@@ -3,13 +3,9 @@ package src.com.client_java;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.net.Socket;
 import java.security.KeyStore;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
@@ -182,7 +178,7 @@ public class Client {
             String response = new String(buffer, 0, n);
 
             if (response.startsWith("202/")) {
-                System.out.println("\n[INFO] - Seance '" + name + "' created successfully.");
+                System.out.println("\n[INFO] - Student '" + name + "' created successfully.");
                 return true;
             } else {
                 System.out.println("Failed to create student. Server response: " + response);
@@ -203,7 +199,7 @@ public class Client {
             String response = new String(buffer, 0, n);
 
             if (response.startsWith("202/")) {
-                System.out.println("\n[INFO] - Seance '" + idStudent + "' deleted successfully.");
+                System.out.println("\n[INFO] - Student '" + idStudent + "' deleted successfully.");
             } else {
                 System.out.println("Failed to create student. Server response: " + response);
             }

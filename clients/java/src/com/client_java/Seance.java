@@ -40,6 +40,15 @@ public class Seance {
         list_etudiant.add(etudiant);
     }
 
+    public void supprimerEtudiant(int etudiantId) {
+        for (Etudiant etudiant : list_etudiant) {
+            if (etudiant.getIdEtudiant() == etudiantId) {
+                list_etudiant.remove(etudiant);
+                break;
+            }
+        }
+    }
+
     public void setAbsence(int id_etudiant, int presence) {
         boolean found = false;
         for (int i = 0; i < list_absent.size(); i++) {

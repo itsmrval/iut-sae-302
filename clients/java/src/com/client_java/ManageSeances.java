@@ -199,8 +199,6 @@ public class ManageSeances {
         frame.getContentPane().add(cards, BorderLayout.CENTER);
         frame.setVisible(true);
 
-
-
     }
 
 
