@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@android:color/darker_gray">
+
+    <Button
+        android:id="@+id/button_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Back"
+        android:background="@android:color/holo_red_dark"
+        android:textColor="@android:color/white" />
+
+    <EditText
+        android:id="@+id/name_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Name"
+        android:background="@android:color/white"
+        android:padding="8dp"
+        android:layout_marginTop="16dp" />
+
+    <Button
+        android:id="@+id/button_validate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Validate"
+        android:background="@android:color/holo_green_dark"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="16dp" />
+</LinearLayout>
