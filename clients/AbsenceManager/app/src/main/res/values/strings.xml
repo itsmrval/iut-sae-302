@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">AbsenceManager</string>
+    <string name="bienvenue_sur_l_application_absence_manager">Bienvenue sur l\'application Absence Manager!</string>
+    <string name="port">Port</string>
+    <string name="connect">Connect</string>
+    <string name="result"> </string>
+    <string name="server_ip">Server IP</string>
+</resources>
