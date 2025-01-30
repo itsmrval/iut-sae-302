@@ -1,3 +1,6 @@
+
+
+
 package com.absence.manager;
 
 import java.io.IOException;
@@ -16,35 +19,58 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
 public class Client {
+    private static volatile Client instance;
     private SSLSocket sockfd;
     private DataOutputStream enSortie;
     private DataInputStream enEntree;
     private String serverIP;
     private int serverPort;
 
+    // Constructeur privé pour empêcher l'instanciation directe
+    private Client() {
+        if (instance != null) {
+            throw new RuntimeException("Utiliser getInstance() pour obtenir l'instance unique.");
+        }
+    }
+
+    // Méthode pour récupérer l'instance unique (thread-safe avec double-check locking)
+    public static Client getInstance() {
+        if (instance == null) {
+            synchronized (Client.class) {
+                if (instance == null) {
+                    instance = new Client();
+                }
+            }
+        }
+        return instance;
+    }
+
     public boolean connectToServer(String host, int port, InputStream certInputStream) {
+        if (isConnected()) {
+            System.out.println("[INFO] Déjà connecté au serveur.");
+            return true;
+        }
+
         try {
-            // Charger le certificat depuis le flux fourni
+            // Charger le certificat
             CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
             Certificate certificate = certificateFactory.generateCertificate(certInputStream);
 
-            // Ajouter le certificat au KeyStore
+            // Ajouter au KeyStore
             KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            keyStore.load(null, null); // Initialiser un KeyStore vide
+            keyStore.load(null, null);
             keyStore.setCertificateEntry("cert", certificate);
 
-            // Initialiser le TrustManagerFactory avec le KeyStore
+            // Configurer le TrustManager
             TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             tmf.init(keyStore);
 
-            // Créer un contexte SSL avec le TrustManager
+            // Configurer SSL
             SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
             sslContext.init(null, tmf.getTrustManagers(), null);
-
-            // Créer un SSLSocketFactory à partir du contexte SSL
             SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
 
-            // Établir une connexion au serveur
+            // Connexion
             sockfd = (SSLSocket) sslSocketFactory.createSocket(host, port);
             enSortie = new DataOutputStream(sockfd.getOutputStream());
             enEntree = new DataInputStream(sockfd.getInputStream());
@@ -52,9 +78,8 @@ public class Client {
             serverIP = host;
             serverPort = port;
 
-            System.out.println("[INFO] Connected to the server | " + host + ":" + port + "\n");
+            System.out.println("[INFO] Connecté au serveur | " + host + ":" + port);
             return true;
-
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -62,8 +87,11 @@ public class Client {
     }
 
     private void sendCommand(String command) throws IOException {
-        enSortie.writeBytes(command);
+        byte[] buffer = command.getBytes();
+        enSortie.write(buffer, 0, buffer.length);
     }
+
+
 
     // Get Seances from the server
     public List<Seance> getSeances() {
@@ -105,16 +133,25 @@ public class Client {
                 System.out.println("No students available");
             } else {
                 String studentsStr = new String(buffer, 0, n).substring(4);
-                studentsStr = studentsStr.substring(0, studentsStr.length() - 1);
+                studentsStr = studentsStr.substring(0, studentsStr.length() - 1); // remove last character (likely a newline)
+
+                // Log the raw response before parsing
+                System.out.println("Raw server response: " + studentsStr);
+
                 String[] studentsArray = studentsStr.split(";");
 
                 for (String studentStr : studentsArray) {
                     String[] parts = studentStr.split(",");
-                    if (parts.length >= 2) { // Ensure valid data
-                        int id_student = Integer.parseInt(parts[0].split(":")[1]);
-                        String nom_student = parts[1].split(":")[1];
-                        Etudiant etudiant = new Etudiant(id_student, nom_student);
-                        students.add(etudiant);
+                    if (parts.length == 2) { // Ensure valid data (id and name)
+                        try {
+                            int id_student = Integer.parseInt(parts[0].split(":")[1].trim());
+                            String nom_student = parts[1].split(":")[1].trim();
+                            Etudiant etudiant = new Etudiant(id_student, nom_student);
+                            students.add(etudiant);
+                        } catch (Exception e) {
+                            System.out.println("Error parsing student: " + studentStr);
+                            e.printStackTrace();
+                        }
                     } else {
                         System.out.println("Invalid student data: " + studentStr);
                     }
@@ -125,6 +162,7 @@ public class Client {
         }
         return students;
     }
+
 
     // Create a Seance
     public boolean createSeance(String name, long unixTime) {
@@ -249,19 +287,23 @@ public class Client {
         return -1; // Return a default value indicating an error
     }
 
+    public boolean isConnected() {
+        return sockfd != null && sockfd.isConnected();
+    }
 
     public void closeResources() {
         try {
             if (enSortie != null) enSortie.close();
             if (enEntree != null) enEntree.close();
             if (sockfd != null) sockfd.close();
-            System.out.println("[INFO] - Disconnected from the server");
+            instance = null; // Permet de recréer une instance propre si nécessaire
+            System.out.println("[INFO] Déconnecté du serveur.");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    // Getters for server info
+    // Getters pour l'IP et le port du serveur
     public String getServerIP() {
         return serverIP;
     }
@@ -270,5 +312,7 @@ public class Client {
         return serverPort;
     }
 
-
+    // ---- TES MÉTHODES EXISTANTES SONT CONSERVÉES ----
+    // Elles utilisent maintenant le Singleton proprement
 }
+

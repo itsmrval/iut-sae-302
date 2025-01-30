@@ -18,7 +18,7 @@ public class CreateStudentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_student);
 
-        client = new Client(); // Initialize your client here
+        Client client = Client.getInstance(); // Initialize your client here
 
         EditText nameField = findViewById(R.id.name_field);
         Button validateButton = findViewById(R.id.button_validate);

@@ -30,7 +30,7 @@
         <activity android:name=".ManageStudentsActivity" />
 
         <!-- Déclaration de l'activité ViewAttendanceActivity -->
-        <activity android:name=".ViewAttendanceActivity" />
+        <activity android:name=".ManageSeancesActivity" />
 
 
 
