@@ -1,17 +1,19 @@
 package src.com.client_java;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.TimeZone;
+import java.util.Date;
 
 public class Seance {
     private int id_seance;
     private String nom_seance;
     private List<Etudiant> list_etudiant;
     private List<Absence> list_absent;
-    private int unixTime;
+    private Long unixTime;
 
-    public Seance(int id_seance, String nom_seance, int unixTime) {
+    public Seance(int id_seance, String nom_seance, Long unixTime) {
         this.id_seance = id_seance;
         this.nom_seance = nom_seance;
         this.list_etudiant = new ArrayList<>();
@@ -20,7 +22,7 @@ public class Seance {
        
     }
 
-    public int getUnixTime() {
+    public Long getUnixTime() {
         return unixTime;
     }   
     
@@ -70,12 +72,20 @@ public class Seance {
 
     @Override
     public String toString() {
+        // Convert Unix time to readable date and time
+        System.out.println(unixTime);
+
+        Date date = new Date(unixTime * 1000); // Convert seconds to milliseconds
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        String formattedDate = sdf.format(date);
+
         StringBuilder sb = new StringBuilder();
-        sb.append("\nSeance: ").append(nom_seance).append(" [ID - ").append(id_seance).append("]\n");
- 
+        sb.append("\nSeance: ").append(nom_seance).append(" [ID ").append(id_seance).append("] - [").append(formattedDate).append("]\n");
         for (Etudiant etudiant : list_etudiant) {
             sb.append("Etudiant: ").append(etudiant.getNomEtudiant()).append(" - Présence: ");
             boolean found = false;
+
             for (Absence absence : list_absent) {
                 if (absence.getIdEtudiant() == etudiant.getIdEtudiant()) {
                     sb.append(absence.getPresence() == 0 ? "Absent" : "Présent");

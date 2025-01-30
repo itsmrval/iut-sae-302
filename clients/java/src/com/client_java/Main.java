@@ -1,7 +1,10 @@
 package src.com.client_java;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Date;
 
 public class Main {
     public static void main(String[] args) {
@@ -50,20 +53,9 @@ public class Main {
                                 // Récupère la liste des étudiants et des séances depuis le serveur
                                 List<Etudiant> etudiants = client.getStudents();
                                 List<Seance> seances = client.getSeances();
-                                
-                                // Ajoute les étudiants aux séances et met à jour leur statut de présence
-                                for (Seance seance : seances) {
-                                    for (Etudiant etudiant : etudiants) {
-                                        seance.ajouterEtudiant(etudiant);
-                                        int status = client.getAttendanceStudent(seance.getIdSeance(), etudiant.getIdEtudiant());
-                                        if (status == 1) {
-                                            seance.setAbsence(etudiant.getIdEtudiant(), 1);
-                                        } else {
-                                            seance.setAbsence(etudiant.getIdEtudiant(), 0);
-                                        }
-                                    }
-                                }
-                                
+                            
+                                fillObjects(client, seances, etudiants);
+
                                 // Menu des opérations disponibles pour l'utilisateur
                                 while (true) {
                                     System.out.println("---------------Menu---------------");
@@ -164,8 +156,44 @@ public class Main {
 
                                         case 5:
                                             // Demande de créer une nouvelle seance
-                                            System.out.println("Au revoir!");
-                                            client.closeResources();
+                                            scanner.nextLine(); // Consomme la nouvelle ligne
+                                            System.out.println("Veuillez entrer le nom de la séance :");
+                                            String nomSeance = scanner.nextLine();
+
+                                            String dateSeance;
+                                            while (true) {
+                                                System.out.println("Veuillez entrer la date de la séance (format JJ/MM/AAAA) :");
+                                                dateSeance = scanner.nextLine();
+                                                if (dateSeance.matches("^(0[1-9]|[12][0-9]|3[01])/([0][1-9]|1[0-2])/\\d{4}$")) {
+                                                    break;
+                                                } else {
+                                                    System.out.println("Format de date invalide. Veuillez réessayer.");
+                                                }
+                                            }
+
+                                            String heureSeance;
+                                            while (true) {
+                                                System.out.println("Veuillez entrer l'heure de la séance (format HH:MM) :");
+                                                heureSeance = scanner.nextLine();
+                                                if (heureSeance.matches("^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$")) {
+                                                    break;
+                                                } else {
+                                                    System.out.println("Format d'heure invalide. Veuillez réessayer.");
+                                                }
+                                            }
+
+                                            String dateTime = dateSeance + " " + heureSeance;
+                                            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                                            long unixTime = 0;
+                                            try {
+                                                Date date = sdf.parse(dateTime);
+                                                unixTime = date.getTime() / 1000; // Convert to seconds
+                                            } catch (ParseException e) {
+                                                e.printStackTrace();
+                                            }
+                                            client.createSeance(nomSeance, unixTime);
+                                            seances = client.getSeances();
+                                            fillObjects(client, seances, etudiants);
                                             break;
 
                                         case 6:
@@ -209,12 +237,17 @@ public class Main {
                                             for (Seance seance : seances) {
                                                 if (seance.getIdSeance() == idseancesupp) {
                                                     client.deleteSeance(idseancesupp);
-                                                    seances = client.getSeances();
                                                     seanceTrouve = true;
                                                     break;
                                                 }
                                             }
-                                            if (!seanceTrouve) {
+                                            if (seanceTrouve) {
+                                                seances = client.getSeances();
+                                                etudiants = client.getStudents();
+
+                                                fillObjects(client, seances, etudiants);
+
+                                            } else {
                                                 System.out.println("[INFO] Seance non trouvée");
                                             }
                                             break;
@@ -262,6 +295,21 @@ public class Main {
                     break;
             }
         scanner.close();
+        }
+    }
+
+    public static void fillObjects(Client client, List<Seance> seances, List<Etudiant> etudiants) {
+        // Ajoute les étudiants aux séances et met à jour leur statut de présence
+        for (Seance seance : seances) {
+            for (Etudiant etudiant : etudiants) {
+                seance.ajouterEtudiant(etudiant);
+                int status = client.getAttendanceStudent(seance.getIdSeance(), etudiant.getIdEtudiant());
+                if (status == 1) {
+                    seance.setAbsence(etudiant.getIdEtudiant(), 1);
+                } else {
+                    seance.setAbsence(etudiant.getIdEtudiant(), 0);
+                }
+            }
         }
     }
 }

@@ -18,7 +18,7 @@ public class ViewAttendance {
     private Client client;
     private int seanceId;
     private String seanceName;
-    private int unixTime;
+    private Long unixTime;
 
     public ViewAttendance(Client client, Seance seance) {
         this.client = client;

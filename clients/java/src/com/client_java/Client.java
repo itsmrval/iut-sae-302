@@ -89,7 +89,7 @@ public class Client {
                     String[] parts = seanceStr.split(",");
                     int id_seance = Integer.parseInt(parts[0].split(":")[1]);
                     String nom_seance = parts[1].split(":")[1];
-                    int unixTime = Integer.parseInt(parts[2].split(":")[1]);
+                    Long unixTime = Long.parseLong(parts[2].split(":")[1]);
                     Seance seance = new Seance(id_seance, nom_seance, unixTime);
                     seances.add(seance);
                 }

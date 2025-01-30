@@ -20,7 +20,7 @@ public class Attendance {
     private Client client;
     private int seanceId;
     private String seanceName;
-    private int unixTime;
+    private Long unixTime;
     private Map<Etudiant, JCheckBox> studentCheckBoxMap;
 
     public Attendance(Client client, Seance seance) {
