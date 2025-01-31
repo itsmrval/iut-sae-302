@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:padding="16dp"
+    android:background="@color/white">
+
+    <!-- AppBar -->
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/purple_700"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/connexion"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:layout_gravity="center" />
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <!-- Logo -->
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/logo"
+        android:layout_marginTop="32dp"
+        android:contentDescription="@string/logo_description"/>
+
+    <!-- Title -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/connexion"
+        android:textStyle="bold"
+        android:textSize="24sp"
+        android:layout_marginTop="16dp" />
+
+    <!-- IP Input -->
+    <EditText
+        android:id="@+id/ip_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/ip_du_serveur"
+        android:inputType="text"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/edit_text_background"
+        android:padding="12dp"/>
+
+    <!-- Port Input -->
+    <EditText
+        android:id="@+id/port_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/port"
+        android:inputType="number"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/edit_text_background"
+        android:padding="12dp" />
+
+    <EditText
+        android:id="@+id/status_connect"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/status_connect"
+        android:inputType="number"
+        android:layout_marginTop="12dp"
+        android:padding="12dp" />
+
+    <!-- Connect Button -->
+    <Button
+        android:id="@+id/connect_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/connecter"
+        android:layout_marginTop="24dp"
+        android:backgroundTint="@color/purple_700"
+        android:textColor="@android:color/white"/>
+
+    <!-- Footer -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/copyright_bbgv"
+        android:textSize="12sp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="24dp" />
+
+</LinearLayout>

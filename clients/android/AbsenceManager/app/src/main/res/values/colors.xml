@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary app color -->
+    <color name="purple_500">#6200EE</color>
+    <color name="purple_700">#3700B3</color>
+    <color name="teal_200">#03DAC5</color>
+
+    <!-- Background and text colors -->
+    <color name="background_color">#FFFFFF</color>
+    <color name="text_primary">#000000</color>
+    <color name="text_secondary">#757575</color>
+    <color name="white">#FFFFFF</color>
+    <color name="gray">#DDDDDD</color>
+
+    <!-- Button and other UI element colors -->
+    <color name="button_color">#6200EE</color>
+    <color name="button_text_color">#FFFFFF</color>
+
+    <color name="primaryColor">#007ACC</color>
+    <color name="buttonBackground">#3B5998</color>
+    <color name="orange">#F7931E</color>
+</resources>

@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">AbsenceManager</string>
+    <string name="ip_du_serveur">IP du serveur</string>
+    <string name="connexion">Connexion</string>
+    <string name="port">Port</string>
+    <string name="connecter">Connecter</string>
+    <string name="copyright_bbgv">Copyright © BBGV</string>
+    <string name="logo_description"> Logo</string>
+    <string name="status_connect"> </string>
+
+    <string name="view_attendance">View Attendance</string>
+    <string name="take_attendance">Take Attendance</string>
+    <string name="manage_students">Manage Students</string>
+    <string name="manage_seances">Manage Seances</string>
+    <string name="disconnect">Disconnection</string>
+
+
+</resources>
