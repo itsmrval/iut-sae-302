@@ -81,7 +81,7 @@ public class Seance {
         String formattedDate = sdf.format(date);
 
         StringBuilder sb = new StringBuilder();
-        sb.append("\nSeance: ").append(nom_seance).append(" - [").append(formattedDate).append("]\n");
+        sb.append(nom_seance).append(" - [").append(formattedDate).append("]\n");
         for (Etudiant etudiant : list_etudiant) {
             sb.append("Etudiant: ").append(etudiant.getNomEtudiant()).append(" - Présence: ");
             boolean found = false;

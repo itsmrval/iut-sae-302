@@ -13,6 +13,10 @@
     <string name="manage_students">Manage Students</string>
     <string name="manage_seances">Manage Seances</string>
     <string name="disconnect">Disconnection</string>
+    <string name="buttontrash">buttontrash</string>
+    <string name="new_seance">New Seance</string>
+    <string name="nom_de_la_s_ance">Nom de la séance</string>
+    <string name="choisir_la_date_et_l_heure">Choisir la date et l\'heure</string>
 
 
 </resources>

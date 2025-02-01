@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+
+    <androidx.appcompat.widget.Toolbar
+    android:id="@+id/toolbar"
+    android:layout_width="395dp"
+    android:layout_height="wrap_content"
+    android:background="@color/purple_700"
+    android:elevation="4dp"
+    app:title="@string/app_name"
+    app:titleCentered="true"
+    app:titleTextColor="@android:color/white" />
+
+
+    <!-- Champ de texte pour le nom de la séance -->
+    <EditText
+        android:layout_marginTop="150dp"
+        android:id="@+id/editTextSeanceName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/nom_de_la_s_ance" />
+
+    <!-- Bouton pour choisir la date et l'heure -->
+    <Button
+        android:id="@+id/buttonChooseDateTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/choisir_la_date_et_l_heure" />
+
+    <!-- Affichage de la date et de l'heure sélectionnées -->
+    <TextView
+        android:id="@+id/textViewDateTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Date et heure non sélectionnées"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp" />
+
+    <!-- Bouton de validation -->
+    <Button
+        android:id="@+id/buttonValidate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Valider" />
+
+</LinearLayout>

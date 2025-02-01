@@ -1,30 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="16dp"
     android:background="@color/white">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_width="395dp"
+        android:layout_height="wrap_content"
         android:background="@color/purple_700"
         android:elevation="4dp"
         app:title="@string/app_name"
-        app:titleTextColor="@android:color/white"
-        app:titleCentered="true" />
+        app:titleCentered="true"
+        app:titleTextColor="@android:color/white" />
+
+    <Button
+        android:id="@+id/newSeanceButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/new_seance"
+        android:layout_below="@id/toolbar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/custom_button"
+        android:textColor="@android:color/white"
+        android:padding="10dp"
+        android:textSize="16sp"
+        android:elevation="4dp" />
 
     <ListView
         android:id="@+id/seancesListView"
-        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/newSeanceButton"
+        android:layout_marginTop="20dp"
         android:divider="@android:color/darker_gray"
         android:dividerHeight="1dp"
         android:background="@drawable/custom_button"
-        android:padding="10dp"
-        />
-</LinearLayout>
+        android:padding="10dp" />
+</RelativeLayout>
