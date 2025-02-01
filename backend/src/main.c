@@ -185,6 +185,7 @@ void handle_get(SSL *ssl, const char* content) {
     }
 }
 
+// Function to handle POST requests
 void handle_post(SSL *ssl, const char* content) {
     if (strncmp(content, "student/", 8) == 0) {
         char name[100];

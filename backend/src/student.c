@@ -7,6 +7,7 @@
 
 bool delete_student_attendance(int id);
 
+// Function to add a student to the database
 bool add_student(Student* student) {
     FILE *file = fopen(STUDENTS_FILE, "a+");
     if (!file) return false;
@@ -25,6 +26,7 @@ bool add_student(Student* student) {
     return true;
 }
 
+// Function to get a student from the database
 bool get_student(int id, char* name) {
     FILE *file = fopen(STUDENTS_FILE, "r");
     if (!file) return false;
@@ -42,6 +44,7 @@ bool get_student(int id, char* name) {
     return false;
 }
 
+// Function to get a list of students from the database
 bool get_student_list(char* result) {
     FILE *file = fopen(STUDENTS_FILE, "r");
     if (!file) return false;
@@ -61,6 +64,7 @@ bool get_student_list(char* result) {
     return true;
 }
 
+// Function to delete a student from the database
 bool delete_student(int id) {
     FILE *file = fopen(STUDENTS_FILE, "r");
     if (!file) return false;

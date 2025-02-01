@@ -2,25 +2,31 @@ CC = gcc
 
 CFLAGS = -Wall -g
 
-OPENSSL_CFLAGS = -I$(shell brew --prefix openssl)/include
-OPENSSL_LIBS = -L$(shell brew --prefix openssl)/lib -lssl -lcrypto
+DIST_DIR = ../../dist/client_c
 
-# Update the source file paths to include the src/ directory
 SRCS = src/main.c
 
-OBJS = $(SRCS:.c=.o)
+OBJS = $(SRCS:src/%.c=$(DIST_DIR)/%.o)
 
-EXEC = client
+EXEC = $(DIST_DIR)/client
 
-all: $(EXEC)
+
+all: create_dist_dir $(EXEC) clean_o_files
 
 $(EXEC): $(OBJS)
 	$(CC) -o $@ $^ $(OPENSSL_LIBS)
 
-%.o: %.c
+$(DIST_DIR)/%.o: src/%.c
 	$(CC) $(CFLAGS) $(OPENSSL_CFLAGS) -c $< -o $@
 
+create_dist_dir:
+	mkdir -p $(DIST_DIR)
+
+clean_o_files:
+	rm -f $(DIST_DIR)/*.o
+
 clean:
-	rm -f $(OBJS) $(EXEC)
+	rm -rf $(EXEC) $(DIST_DIR)
+
 
 .PHONY: all clean
