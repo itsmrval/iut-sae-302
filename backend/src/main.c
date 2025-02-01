@@ -92,7 +92,6 @@ int main(int argc, char *argv[]) {
             pthread_detach(thread_id);
         }
     }
-
     return 0;
 }
 
@@ -129,7 +128,7 @@ void initialize_server(int port) {
     }
 
     printf("[INFO] Server is listening on port %d...\n", port);
-}
+}   
 
 // Function to handle client requests and delegate to appropriate handlers
 void handle_request(SSL *ssl, const char* request, const char* client_ip) {

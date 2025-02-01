@@ -2,7 +2,8 @@
 dist/
 # Prerequisites
 *.d
-
+*.gradle/*
+clients/java/.gradle/
 # Object files
 *.o
 *.ko

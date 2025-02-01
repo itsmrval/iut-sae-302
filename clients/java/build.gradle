@@ -2,26 +2,70 @@ plugins {
     id 'application'
 }
 
+group = 'com.client_java'
+version = '1.0'
+sourceCompatibility = '1.8'
+
 repositories {
     mavenCentral()
 }
 
 dependencies {
     implementation 'com.toedter:jcalendar:1.4'
+    implementation 'org.swinglabs:swingx:1.6.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 }
 
-sourceSets {
-    main {
-        java {
-            srcDirs = ['src']
+application {
+    mainClass = 'com.client_java.Main' 
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': application.mainClass
+    }
+    
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+task cleanDistDir(type: Delete) {
+    delete '../../dist/client_java'
+}
+
+task buildAndMoveJar {
+    dependsOn cleanDistDir, build 
+
+    doLast {
+        def distDir = file('../../dist/client_java')
+        if (!distDir.exists()) {
+            distDir.mkdirs()
+        }
+
+        def jarFile = file("./build/libs/${project.name}-${version}.jar")
+
+        if (jarFile.exists()) {
+            copy {
+                from jarFile
+                into distDir
+            }
+            println "Moved JAR file to ${distDir.absolutePath}"
+        } else {
+            throw new GradleException("JAR file not found: ${jarFile.absolutePath}")
+        }
+
+        def buildDir = file('./build')
+        if (buildDir.exists()) {
+            delete buildDir
+            println "Deleted build directory: ${buildDir.absolutePath}"
         }
     }
 }
 
-application {
-    mainClass = 'com.client_java.Main'
-}
-
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8' 
-}
+defaultTasks 'buildAndMoveJar'
