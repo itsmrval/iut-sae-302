@@ -72,13 +72,13 @@ public class CreateSeanceActivity extends AppCompatActivity {
                 Client client = Client.getInstance();
 
                 // Créez et démarrez le thread pour envoyer la commande au serveur
-                MyThreadGet myThreadGet = new MyThreadGet(client, "createseance:" + seanceName + ":" + unixTime, CreateSeanceActivity.this, null, null);
-                myThreadGet.start();
+                MyThreadCommand mythreadcommand = new MyThreadCommand(client, "createseance:" + seanceName + ":" + unixTime, CreateSeanceActivity.this, null, null);
+                mythreadcommand.start();
 
 
                 try {
                     // Attendre que le thread termine son exécution
-                    myThreadGet.join();
+                    mythreadcommand.join();
                     // Afficher un message de confirmation
                     Toast.makeText(CreateSeanceActivity.this, "Séance créée avec succès", Toast.LENGTH_SHORT).show();
 

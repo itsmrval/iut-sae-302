@@ -49,6 +49,11 @@
         </activity>
 
         <activity
+            android:name=".ViewAttendanceSeanceActivity"
+            android:exported="true">
+        </activity>
+
+        <activity
             android:name=".ViewAttendanceActivity"
             android:exported="true">
         </activity>
@@ -58,6 +63,15 @@
             android:exported="true">
         </activity>
 
+        <activity
+            android:name=".CreateStudentActivity"
+            android:exported="true">
+        </activity>
+
+        <activity
+            android:name=".SaveAttendanceActivity"
+            android:exported="true">
+        </activity>
     </application>
 
 </manifest>

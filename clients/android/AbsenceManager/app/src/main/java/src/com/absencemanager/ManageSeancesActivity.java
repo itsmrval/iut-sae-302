@@ -52,8 +52,8 @@ public class ManageSeancesActivity extends AppCompatActivity {
 
     private void refreshSeancesList() {
         // Créer et démarrer un thread pour récupérer les séances
-        MyThreadGet myThreadGet = new MyThreadGet(client, "seances", this, seancesListView, textStatus);
-        myThreadGet.start();
+        MyThreadCommand mythreadcommand = new MyThreadCommand(client, "seances", this, seancesListView, textStatus);
+        mythreadcommand.start();
     }
 
 
@@ -93,8 +93,8 @@ public class ManageSeancesActivity extends AppCompatActivity {
                         Log.d("TrashButtonClick", "ID de la séance à supprimer : " + seanceId);
 
                         // Démarrer un thread pour supprimer la séance côté serveur
-                        MyThreadGet myThreadGet = new MyThreadGet(client, "deleteseance:" + seanceId, ManageSeancesActivity.this, seancesListView, textStatus);
-                        myThreadGet.start();
+                        MyThreadCommand mythreadcommand = new MyThreadCommand(client, "deleteseance:" + seanceId, ManageSeancesActivity.this, seancesListView, textStatus);
+                        mythreadcommand.start();
                     }
                 };
 

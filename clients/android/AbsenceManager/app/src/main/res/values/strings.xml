@@ -17,6 +17,12 @@
     <string name="new_seance">New Seance</string>
     <string name="nom_de_la_s_ance">Nom de la séance</string>
     <string name="choisir_la_date_et_l_heure">Choisir la date et l\'heure</string>
+    <string name="choose_the_seance">Choose the Seance</string>
+    <string name="take_attendance_in_this_seance">Take Attendance in this Seance</string>
+    <string name="valider">Valider</string>
+    <string name="validate">Validate</string>
+    <string name="create_student">Create Student</string>
+    <string name="statut">Statut</string>
 
 
 </resources>

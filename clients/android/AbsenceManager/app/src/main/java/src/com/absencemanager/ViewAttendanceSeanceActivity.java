@@ -1,22 +1,16 @@
 package src.com.absencemanager;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Button;
-import androidx.appcompat.app.AlertDialog;
+
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.List;
-
-public class TakeAttendanceActivity extends AppCompatActivity {
+public class ViewAttendanceSeanceActivity extends AppCompatActivity {
 
     private Client client; // Déclarer client comme attribut
     private ListView seancesListView; // Déclarer seancesListView comme attribut
@@ -25,7 +19,7 @@ public class TakeAttendanceActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.acitivty_take_attendance);
+        setContentView(R.layout.activity_view_attendance_seance);
 
         client = Client.getInstance(); // Initialiser client
         seancesListView = findViewById(R.id.seancesListView); // Initialiser seancesListView
@@ -33,6 +27,7 @@ public class TakeAttendanceActivity extends AppCompatActivity {
 
         // Rafraîchir la liste des séances
         refreshSeancesList();
+
 
         // Associer l'écouteur de clic à la ListView
         seancesListView.setOnItemClickListener(new SeanceItemClickListener());
@@ -62,12 +57,10 @@ public class TakeAttendanceActivity extends AppCompatActivity {
                 Log.d("SeanceClick", "ID de la séance cliquée : " + seanceId);
 
                 // Vous pouvez transmettre cet ID à l'activité suivante
-                Intent intent = new Intent(TakeAttendanceActivity.this, SaveAttendanceActivity.class);
+                Intent intent = new Intent(ViewAttendanceSeanceActivity.this, ViewAttendanceActivity.class);
                 intent.putExtra("seance_id", seanceId);
                 startActivity(intent);
             }
         }
     }
-
-
 }

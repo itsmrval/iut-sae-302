@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import android.view.View;
+import android.view.View.OnClickListener;
 import src.com.absencemanager.Client;
 import src.com.absencemanager.MyThread;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,33 +32,36 @@ public class MainActivity extends AppCompatActivity {
         Button connectButton = findViewById(R.id.connect_button);
 
         // Set click listener for the Connect button
-        connectButton.setOnClickListener(v -> {
-            String ip = ipInput.getText().toString();
-            String port = portInput.getText().toString();
+        connectButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String ip = ipInput.getText().toString();
+                String port = portInput.getText().toString();
 
-            if (validateInput(ip, port)) {
+                if (validateInput(ip, port)) {
 
-                InputStream certInputStream = getResources().openRawResource(R.raw.cert);
-                Client client = Client.getInstance(); // Obtenir l'instance unique du client
-                MyThread myThread = new MyThread(this, client, ip, Integer.parseInt(port), certInputStream);
-                // Démarrer le thread
-                myThread.start();
+                    InputStream certInputStream = getResources().openRawResource(R.raw.cert);
+                    Client client = Client.getInstance(); // Obtenir l'instance unique du client
+                    MyThread myThread = new MyThread(MainActivity.this, client, ip, Integer.parseInt(port), certInputStream);
+                    // Démarrer le thread
+                    myThread.start();
 
-                try {
-                    // Attendre que le thread se termine
-                    myThread.join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    try {
+                        // Attendre que le thread se termine
+                        myThread.join();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (myThread.isConnected()) {
+                        Log.d("MainActivity", "Connexion réussie");
+                        Intent intent = new Intent(MainActivity.this, MenuActivity.class);
+                        intent.putExtra("ip", ip);
+                        startActivity(intent);
+                    }
+                } else {
+                    textstatus.setText("Veuillez entrer une adresse IP et un port valide.");
                 }
-
-                if (myThread.isConnected()) {
-                    Log.d("MainActivity", "Connexion réussie");
-                    Intent intent = new Intent(MainActivity.this, MenuActivity.class);
-                    intent.putExtra("ip", ip);
-                    startActivity(intent);
-                }
-            } else {
-                textstatus.setText("Veuillez entrer une adresse IP et un port valide.");
             }
         });
     }
@@ -65,5 +70,4 @@ public class MainActivity extends AppCompatActivity {
         // Simple validation logic for IP and port
         return !ip.isEmpty() && !port.isEmpty();
     }
-
 }

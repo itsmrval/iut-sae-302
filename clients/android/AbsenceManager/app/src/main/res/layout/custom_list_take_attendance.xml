@@ -1,0 +1,26 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:background="@drawable/custom_button"> <!-- Arrière-plan appliqué ici -->
+
+    <TextView
+        android:id="@+id/textViewItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_toStartOf="@+id/checkBoxSelect" />
+
+    <CheckBox
+        android:id="@+id/checkBoxSelect"
+        android:layout_width="30dp"
+        android:layout_height="wrap_content"
+        android:buttonTint="@color/white"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:paddingEnd="10dp" />
+
+</RelativeLayout>
