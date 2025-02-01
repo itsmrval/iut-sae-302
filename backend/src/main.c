@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <signal.h> 
+#include <pthread.h>
 #include "utils.h"
 #include "seance.h"
 #include "student.h"
@@ -34,9 +35,6 @@ void handle_action(SSL *ssl, const char* content);
 void handle_delete(SSL *ssl, const char* content);
 void initialize_server();
 void cleanup_and_exit();
-
-
-#include <pthread.h>
 
 // Function to handle each client in a separate thread
 void* client_handler(void* arg) {
