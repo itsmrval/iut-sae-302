@@ -36,6 +36,21 @@ void initialize_server();
 void cleanup_and_exit();
 
 
+#include <pthread.h>
+
+// Function to handle each client in a separate thread
+void* client_handler(void* arg) {
+    int client_socket = *((int*)arg);
+    free(arg);
+
+    struct sockaddr_in address;
+    socklen_t addrlen = sizeof(address);
+    getpeername(client_socket, (struct sockaddr*)&address, &addrlen);
+
+    handle_ssl_client(client_socket, address);
+    return NULL;
+}
+
 int main() {
     // Initialize OpenSSL
     init_openssl();
@@ -57,13 +72,22 @@ int main() {
     while (1) {
         struct sockaddr_in address;
         socklen_t addrlen = sizeof(address);
-        int client_socket = accept(server_socket, (struct sockaddr*)&address, &addrlen);
-        if (client_socket < 0) {
+        int* client_socket = malloc(sizeof(int));
+        *client_socket = accept(server_socket, (struct sockaddr*)&address, &addrlen);
+        if (*client_socket < 0) {
             perror("[ERROR] Accept failed");
+            free(client_socket);
             continue;
         }
 
-        handle_ssl_client(client_socket, address); // Use SSL client handler
+        pthread_t thread_id;
+        if (pthread_create(&thread_id, NULL, client_handler, client_socket) != 0) {
+            perror("[ERROR] Thread creation failed");
+            close(*client_socket);
+            free(client_socket);
+        } else {
+            pthread_detach(thread_id); // Detach the thread to handle its own cleanup
+        }
     }
 
     return 0;

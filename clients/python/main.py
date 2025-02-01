@@ -5,13 +5,23 @@ import ssl
 from datetime import datetime
 import time
 from tkcalendar import Calendar
+
 class SSLSocket:
-    def __init__(self):
+    def __init__(self, certfile='./ssl/cert.pem', keyfile=None, cafile=None):
         # Create SSL context
         self.context = ssl.create_default_context()
+        
+        # Optionally load a client certificate and key
+        if certfile and keyfile:
+            self.context.load_cert_chain(certfile=certfile, keyfile=keyfile)
+        
+        # Optionally load CA certificates (for server verification)
+        if cafile:
+            self.context.load_verify_locations(cafile=cafile)
+        
         # Don't verify server certificate (for development/testing)
         self.context.check_hostname = False
-        self.context.verify_mode = ssl.CERT_NONE
+        self.context.verify_mode = ssl.CERT_NONE  # Set to CERT_OPTIONAL or CERT_REQUIRED if you want verification
         
         # Create socket and wrap with SSL
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -40,6 +50,7 @@ class SSLSocket:
         if self.ssl_sock:
             self.ssl_sock.close()
         self.sock.close()
+
 
 
 class TimeSelector(tk.Frame):
