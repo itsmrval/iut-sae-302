@@ -7,12 +7,12 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <signal.h> 
+#include <pthread.h>
 #include "utils.h"
 #include "seance.h"
 #include "student.h"
 #include "attendance.h"
 #include "openssl.h"
-#define PORT 8081
 #define BUFFER_SIZE 1024
 
 // Defining response messages
@@ -35,42 +35,69 @@ void handle_delete(SSL *ssl, const char* content);
 void initialize_server();
 void cleanup_and_exit();
 
+// Function to handle each client in a separate thread
+void* client_handler(void* arg) {
+    int client_socket = *((int*)arg);
+    free(arg);
 
-int main() {
-    // Initialize OpenSSL
-    init_openssl();
+    struct sockaddr_in address;
+    socklen_t addrlen = sizeof(address);
+    getpeername(client_socket, (struct sockaddr*)&address, &addrlen);
 
-    // Initialize the database
-    if (!init_db()) {
-        fprintf(stderr, "[ERROR] Failed to initialize the database.\n");
-        cleanup_openssl(); // Clean up OpenSSL
+    handle_ssl_client(client_socket, address);
+    return NULL;
+}
+
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "[USAGE] %s <port>\n", argv[0]);
         exit(EXIT_FAILURE);
     }
 
-    // Setup signal handler for graceful shutdown
+    int port = atoi(argv[1]);
+    if (port <= 0 || port > 65535) {
+        fprintf(stderr, "[ERROR] Invalid port number. Must be between 1 and 65535.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    init_openssl();
+
+    if (!init_db()) {
+        fprintf(stderr, "[ERROR] Failed to initialize the database.\n");
+        cleanup_openssl();
+        exit(EXIT_FAILURE);
+    }
+
     signal(SIGINT, cleanup_and_exit);
 
-    // Initialize server
-    initialize_server();
+    initialize_server(port);
 
-    // Server loop
     while (1) {
         struct sockaddr_in address;
         socklen_t addrlen = sizeof(address);
-        int client_socket = accept(server_socket, (struct sockaddr*)&address, &addrlen);
-        if (client_socket < 0) {
+        int* client_socket = malloc(sizeof(int));
+        *client_socket = accept(server_socket, (struct sockaddr*)&address, &addrlen);
+        if (*client_socket < 0) {
             perror("[ERROR] Accept failed");
+            free(client_socket);
             continue;
         }
 
-        handle_ssl_client(client_socket, address); // Use SSL client handler
+        pthread_t thread_id;
+        if (pthread_create(&thread_id, NULL, client_handler, client_socket) != 0) {
+            perror("[ERROR] Thread creation failed");
+            close(*client_socket);
+            free(client_socket);
+        } else {
+            pthread_detach(thread_id);
+        }
     }
 
     return 0;
 }
 
 // Function to initialize the server
-void initialize_server() {
+void initialize_server(int port) {
     server_socket = socket(AF_INET, SOCK_STREAM, 0);
     if (server_socket < 0) {
         perror("[ERROR] Socket creation failed");
@@ -85,10 +112,9 @@ void initialize_server() {
     }
 
     struct sockaddr_in address;
-
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
-    address.sin_port = htons(PORT);
+    address.sin_port = htons(port);
 
     if (bind(server_socket, (struct sockaddr*)&address, sizeof(address)) < 0) {
         perror("[ERROR] Bind failed");
@@ -102,7 +128,7 @@ void initialize_server() {
         exit(EXIT_FAILURE);
     }
 
-    printf("[INFO] Server is listening on port %d...\n", PORT);
+    printf("[INFO] Server is listening on port %d...\n", port);
 }
 
 // Function to handle client requests and delegate to appropriate handlers

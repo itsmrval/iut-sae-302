@@ -6,13 +6,13 @@ CLIENT_TARGET = client
 
 DIST_DIR = ./dist
 
-all: create_dist_dir backend client 
+all: create_dist_dir backend client_c
 
 
 backend:
 	$(MAKE) -C $(BACKEND_DIR) 
 
-client:
+client_c:
 	$(MAKE) -C $(CLIENT_DIR)
 
 
