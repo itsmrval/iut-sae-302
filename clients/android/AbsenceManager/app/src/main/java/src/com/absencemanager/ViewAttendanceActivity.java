@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.List;
 
-public class ViewAttendanceActivity extends AppCompatActivity implements AttendanceCallback {
+public class ViewAttendanceActivity extends AppCompatActivity implements com.absence.manager.AttendanceCallback {
 
     private Client client;
     private ListView studentsListView;
@@ -41,12 +41,9 @@ public class ViewAttendanceActivity extends AppCompatActivity implements Attenda
     public void onAttendanceReceived(int attendance, int position) {
         View itemView = studentsListView.getChildAt(position);
         if (itemView != null) {
-            TextView statusText = itemView.findViewById(R.id.textViewItem);
+            TextView statusText = itemView.findViewById(R.id.textViewStatus);
             if (statusText != null) {
-                String status = "Absent";
-                if (attendance == 1) {
-                    status = "Présent";
-                }
+                String status = attendance == 1 ? "Présent" : "Absent";
                 statusText.setText(status);
             }
         }
@@ -97,4 +94,3 @@ public class ViewAttendanceActivity extends AppCompatActivity implements Attenda
             activity.runOnUiThread(updateRunnable);
         }
     }
-}
