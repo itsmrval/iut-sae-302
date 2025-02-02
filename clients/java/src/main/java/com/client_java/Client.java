@@ -18,11 +18,29 @@ import java.util.List;
 
 
 public class Client {
+
+    private static Client instance; // Instance unique de Client
     private SSLSocket sockfd;
     private DataOutputStream enSortie;
     private DataInputStream enEntree;
     private String serverIP;
     private int serverPort;
+
+    // Constructeur privé pour éviter l'instanciation externe
+    private Client() {}
+
+    // Méthode pour récupérer l'instance unique
+    public static Client getInstance() {
+        if (instance == null) {
+            synchronized (Client.class) {
+                if (instance == null) {
+                    instance = new Client();
+                }
+            }
+        }
+        return instance;
+    }
+
 
     public boolean connectToServer(String hote, int port) {
         try {

@@ -73,7 +73,6 @@ public class Seance {
     @Override
     public String toString() {
         // Convert Unix time to readable date and time
-        System.out.println(unixTime);
 
         Date date = new Date(unixTime * 1000); // Convert seconds to milliseconds
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
