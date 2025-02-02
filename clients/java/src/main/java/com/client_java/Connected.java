@@ -173,13 +173,13 @@ public class Connected {
             seanceButton.setForeground(Color.WHITE);
             seanceButton.setFocusPainted(false);
             seanceButton.setBorder(new LineBorder(Color.WHITE, 1, true)); // Rounded border
-            seanceButton.addActionListener(new ActionListener() {
-                @Override
+
+            ActionListener actionlistenseance = new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    // Handle button click
                     new Attendance(client, seance);
                 }
-            });
+            };
+            seanceButton.addActionListener(actionlistenseance);
 
             // Créer et configurer le bouton "View Attendance"
             JButton seanceViewAttendance = new JButton("View Attendance");
@@ -187,13 +187,12 @@ public class Connected {
             seanceViewAttendance.setForeground(Color.WHITE);
             seanceViewAttendance.setFocusPainted(false);
             seanceViewAttendance.setBorder(new LineBorder(Color.WHITE, 1, true)); // Rounded border
-            seanceViewAttendance.addActionListener(new ActionListener() {
-                @Override
+            ActionListener actionlistenviewseance = new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    System.out.println("View attendance for seance: " + seance.getNomSeance());
                     new ViewAttendance(client, seance);
                 }
-            });
+            };
+            seanceViewAttendance.addActionListener(actionlistenviewseance);
 
             // Ajouter les composants au panneau de la séance avec GridBagConstraints
             GridBagConstraints gbcLabel = new GridBagConstraints();
