@@ -271,15 +271,26 @@ public class Client {
         return -1; // Return a default value indicating an error
     }
 
-    public void closeResources() {
+    public boolean closeResources() {
         try {
-            if (enSortie != null) enSortie.close();
-            if (enEntree != null) enEntree.close();
-            if (sockfd != null) sockfd.close();
+            if (enSortie != null) {
+                enSortie.close();
+                enSortie = null;
+            }
+            if (enEntree != null) {
+                enEntree.close();
+                enEntree = null;
+            }
+            if (sockfd != null) {
+                sockfd.close();
+                sockfd = null;
+            }
             System.out.println("[INFO] - Disconnected from the server");
+            return true;
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return false;
     }
 
     public String getServerIP() {
