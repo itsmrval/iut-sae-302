@@ -64,7 +64,8 @@ public class Accueil {
         buttonConnect.setForeground(Color.WHITE);
 
         // Ajouter des actions au bouton de connexion
-        buttonConnect.addActionListener(new ActionListener() {
+
+        ActionListener actionlisten = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String ip = textFieldIP.getText();
                 int port;
@@ -87,7 +88,8 @@ public class Accueil {
                     JOptionPane.showMessageDialog(frame, "Invalid port number", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
-        });
+        };
+        buttonConnect.addActionListener(actionlisten);
 
         // Ajouter les composants au panneau de connexion avec GridBagConstraints
         gbc.gridx = 0;

@@ -51,7 +51,7 @@ public class Connected {
         buttonDisconnect.setFocusPainted(false); // Désactiver l'effet de peinture
         buttonDisconnect.setBorder(new LineBorder(Color.WHITE, 1, true));
 
-        buttonDisconnect.addActionListener(new ActionListener() {
+        ActionListener actionlistendisconnect = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
                     client.closeResources();
@@ -61,7 +61,8 @@ public class Connected {
                     ex.printStackTrace();
                 }
             }
-        });
+        };
+        buttonDisconnect.addActionListener(actionlistendisconnect);
 
         // Ajouter le bouton "Disconnect" au panneau du haut
         topPanel.add(buttonDisconnect, gbcTop);
@@ -80,8 +81,8 @@ public class Connected {
         buttonStudent.setForeground(Color.WHITE);
         buttonStudent.setFocusPainted(false); // Désactiver l'effet de peinture
         buttonStudent.setBorder(new LineBorder(Color.WHITE, 1, true));
-
-        buttonStudent.addActionListener(new ActionListener() {
+        
+        ActionListener actionlistenstudent = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
                     new ManageStudents(client);
@@ -89,7 +90,9 @@ public class Connected {
                     ex.printStackTrace();
                 }
             }
-        });
+        };
+
+        buttonStudent.addActionListener(actionlistenstudent);
 
         // Ajouter le bouton "Manage Students" au panneau du haut
         gbcTop.gridx = 2;
@@ -104,7 +107,7 @@ public class Connected {
         buttonSeance.setFocusPainted(false); // Désactiver l'effet de peinture
         buttonSeance.setBorder(new LineBorder(Color.WHITE, 1, true));
 
-        buttonSeance.addActionListener(new ActionListener() {
+        ActionListener actionlistenseance = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
                     new ManageSeances(client, Connected.this);
@@ -112,7 +115,8 @@ public class Connected {
                     ex.printStackTrace();
                 }
             }
-        });
+        };
+        buttonSeance.addActionListener(actionlistenseance);
 
         // Ajouter le bouton "Manage Seances" au panneau du haut
         gbcTop.gridx = 3;
@@ -130,12 +134,14 @@ public class Connected {
     }
 
     public void addSeancePanel(JPanel mainPanel) {
-        List<Seance> seances = client.getSeances(); // Assuming this method exists in Client class
+
+        // Récupérer la liste des séances du client
+        List<Seance> seances = client.getSeances();
 
         seancesContainer = new JPanel();
         seancesContainer.setLayout(new GridBagLayout());
         seancesContainer.setBackground(Color.DARK_GRAY);
-        seancesContainer.setBorder(new EmptyBorder(20, 20, 20, 20)); // Add padding around the container
+        seancesContainer.setBorder(new EmptyBorder(20, 20, 20, 20)); // Ajouter un padding autour du conteneur
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
@@ -143,13 +149,14 @@ public class Connected {
         gbc.gridx = 0;
         gbc.gridy = 0;
 
+        // Créer un panneau pour chaque séance
         for (Seance seance : seances) {
             JPanel seancePanel = new JPanel();
             seancePanel.setBackground(Color.DARK_GRAY);
             seancePanel.setLayout(new GridBagLayout());
-            seancePanel.setBorder(new EmptyBorder(10, 10, 10, 10)); // Add padding around each seance panel
+            seancePanel.setBorder(new EmptyBorder(10, 10, 10, 10)); 
 
-            // Convert Unix time to human-readable date and time
+            // Convertir le temps Unix en date lisible
             long unixSeconds = seance.getUnixTime();
             Instant instant = Instant.ofEpochSecond(unixSeconds);
             String formattedDate = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
@@ -160,6 +167,7 @@ public class Connected {
             JLabel labelSeance = new JLabel(seance.getNomSeance() + " - " + formattedDate);
             labelSeance.setForeground(Color.WHITE);
 
+            // Créer et configurer le bouton "Take Attendance"
             JButton seanceButton = new JButton("Take Attendance");
             seanceButton.setBackground(Color.GRAY);
             seanceButton.setForeground(Color.WHITE);
@@ -173,6 +181,7 @@ public class Connected {
                 }
             });
 
+            // Créer et configurer le bouton "View Attendance"
             JButton seanceViewAttendance = new JButton("View Attendance");
             seanceViewAttendance.setBackground(Color.GRAY);
             seanceViewAttendance.setForeground(Color.WHITE);
@@ -186,7 +195,7 @@ public class Connected {
                 }
             });
 
-
+            // Ajouter les composants au panneau de la séance avec GridBagConstraints
             GridBagConstraints gbcLabel = new GridBagConstraints();
             gbcLabel.gridx = 0;
             gbcLabel.gridy = 0;
@@ -196,8 +205,8 @@ public class Connected {
             GridBagConstraints gbcSpace = new GridBagConstraints();
             gbcSpace.gridx = 1;
             gbcSpace.gridy = 0;
-            gbcSpace.weightx = 1.0; // Add space between label and button
-            seancePanel.add(Box.createHorizontalStrut(20), gbcSpace); // Adjust the width as needed
+            gbcSpace.weightx = 1.0; // Ajuster la largeur de l'espace
+            seancePanel.add(Box.createHorizontalStrut(20), gbcSpace); 
 
             GridBagConstraints gbcButton = new GridBagConstraints();
             gbcButton.gridx = 2;
@@ -210,7 +219,7 @@ public class Connected {
             gbcSpaceBetweenButtons.gridx = 3;
             gbcSpaceBetweenButtons.gridy = 0;
             gbcSpaceBetweenButtons.weightx = 0.1; // Ajuster la largeur de l'espace
-            seancePanel.add(Box.createHorizontalStrut(20), gbcSpaceBetweenButtons); // Ajuster la largeur de l'espace
+            seancePanel.add(Box.createHorizontalStrut(20), gbcSpaceBetweenButtons); 
 
             GridBagConstraints gbcButtonView = new GridBagConstraints();
             gbcButtonView.gridx = 4;
