@@ -166,9 +166,7 @@ public class Main {
     }
     
     private static void enregistrerAbsences(Scanner scanner) {
-        for (Seance seance : seances) {
-            System.out.println(seance);
-        }
+        afficherSeances();
     
         System.out.print("\nEntrez ID de la séance | ");
         int id_seance = scanner.nextInt();
@@ -275,6 +273,7 @@ public class Main {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
         long unixTime = 0;
+
         try {
             Date date = sdf.parse(dateTime);
             unixTime = date.getTime() / 1000; // Convert to seconds

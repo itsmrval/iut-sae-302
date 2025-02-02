@@ -41,7 +41,7 @@ public class Client {
         return instance;
     }
 
-
+    
     public boolean connectToServer(String hote, int port) {
         try {
 
@@ -57,8 +57,6 @@ public class Client {
                 X509Certificate cert = (X509Certificate) cf.generateCertificate(fis);
                 keyStore.setCertificateEntry("cert", cert);
             }
-
-
 
             // Initialize the TrustManagerFactory
             TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
@@ -79,6 +77,8 @@ public class Client {
             serverPort = port;
             System.out.println("[INFO] Connected to the server | " + hote + ":" + port + "\n");
             return true;
+
+            
         } catch (Exception e) {
             e.printStackTrace();
             return false;

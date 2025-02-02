@@ -13,7 +13,6 @@ public class Accueil {
 
     private JTextField textFieldIP;
     private JTextField textFieldPort;
-    private Client client; // Déclaration de l'objet Client
 
     public  Accueil() {
         // Créer la fenêtre
@@ -74,7 +73,7 @@ public class Accueil {
                     if (port < 0 || port > 65535) {
                         throw new NumberFormatException("Port number out of range");
                     }
-                    client = new Client(); // Initialisation de l'objet Client
+                    Client client = Client.getInstance(); // Initialisation de l'objet Client
 
                     if (client.connectToServer(ip, port)) {
 
