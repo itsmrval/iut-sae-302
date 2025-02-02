@@ -13,7 +13,7 @@ public class Main {
     // Déclarer les listes comme variables statiques
     private static List<Etudiant> etudiants = new ArrayList<>();
     private static List<Seance> seances = new ArrayList<>();
-    private static Client client; // 
+    private static Client client; 
     
     
     public static void main(String[] args) {
@@ -69,16 +69,22 @@ public class Main {
         String ip = scanner.next();
         System.out.print("Veuillez entrer le port du serveur|");
         int port = scanner.nextInt();
+        scanner.nextLine(); // Consomme la nouvelle ligne
         
-        Client client = Client.getInstance();
+
+
+        client = Client.getInstance();
         try {
             if (client.connectToServer(ip, port)) {
+                System.out.println("[INFO] - Connexion réussie au serveur" + ip + ":" + port);
                 gererMenuPrincipal(scanner);
             } else {
                 System.out.println("[ERROR] - Veuillez vérifier l'adresse IP et le port.");
             }
         } catch (Exception e) {
-            System.out.println("[ERROR] - Veuillez vérifier l'adresse IP et le port.");
+            System.out.println("[ERROR] - Veuillez vérifier l'adresse IP et le port. Erreur : " + e.getMessage());
+            e.printStackTrace();
+
         }
     }
     

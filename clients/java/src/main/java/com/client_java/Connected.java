@@ -192,6 +192,7 @@ public class Connected {
                     new ViewAttendance(client, seance);
                 }
             };
+            
             seanceViewAttendance.addActionListener(actionlistenviewseance);
 
             // Ajouter les composants au panneau de la séance avec GridBagConstraints

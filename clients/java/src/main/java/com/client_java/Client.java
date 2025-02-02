@@ -78,9 +78,10 @@ public class Client {
             System.out.println("[INFO] Connected to the server | " + hote + ":" + port + "\n");
             return true;
 
-            
+
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("[ERROR] - Une erreur s'est produite : " + e.getMessage());
+            e.printStackTrace(); // Ajoutez cette ligne pour le détail des exceptions
             return false;
         }
     }
