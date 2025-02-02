@@ -1,16 +1,24 @@
 CC = gcc
 CFLAGS = -Wall -g
 
-DIST_DIR = ../../dist/client_c
+UNAME_S := $(shell uname -s)
 
-OPENSSL_CFLAGS = -I./libs/openssl/include
-OPENSSL_LIBS = -L./libs/openssl/lib -lssl -lcrypto
+ifeq ($(UNAME_S), Linux)
+    OPENSSL_CFLAGS := $(shell pkg-config --cflags openssl)
+    OPENSSL_LIBS := $(shell pkg-config --libs openssl)
+else ifeq ($(UNAME_S), Darwin)
+    OPENSSL_CFLAGS := -I$(shell brew --prefix openssl)/include
+    OPENSSL_LIBS := -L$(shell brew --prefix openssl)/lib -lssl -lcrypto
+else  
+    OPENSSL_CFLAGS := -I"C:/OpenSSL/include"
+    OPENSSL_LIBS := -L"C:/OpenSSL/lib" -lssl -lcrypto
+endif
+
+DIST_DIR = ../../dist/client_c
 
 SRCS = src/main.c src/display.c src/handlers.c src/network.c
 OBJS = $(SRCS:src/%.c=$(DIST_DIR)/%.o)
-
 EXEC = $(DIST_DIR)/client
-
 OPENSSL_DIR = ../../openssl/ssl
 
 all: create_dist_dir $(EXEC) clean_o_files copy_ssl

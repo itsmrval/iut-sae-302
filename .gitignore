@@ -12,6 +12,7 @@ clients/java/bin/*
 *.obj
 *.elf
 
+
 # Executables
 *.exe
 *.out
