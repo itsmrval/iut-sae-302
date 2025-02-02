@@ -68,4 +68,10 @@ task buildAndMoveJar {
     }
 }
 
+task copySSLCerts(type: Copy) {
+    from '../../openssl/ssl'
+    into '../../dist/client_java/ssl'
+}
+buildAndMoveJar.finalizedBy(copySSLCerts)
+
 defaultTasks 'buildAndMoveJar'
