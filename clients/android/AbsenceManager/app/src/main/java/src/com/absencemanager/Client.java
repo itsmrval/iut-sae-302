@@ -1,4 +1,4 @@
-package src.com.absencemanager;
+package src.com.absencemanager ;
 
 import android.content.Context;
 import java.io.IOException;

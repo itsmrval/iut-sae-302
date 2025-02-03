@@ -168,8 +168,8 @@ public class ManageStudents {
             studentButton.setForeground(Color.RED);
             studentButton.setFocusPainted(false);
             studentButton.setBorder(new LineBorder(Color.WHITE, 1, true)); // Rounded border
-            
-            actionstudentbutton = new ActionListener() {
+
+            ActionListener actionstudentbutton = new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     client.deleteStudent(student.getIdEtudiant());
                     // Supprimer uniquement le panneau correspondant de studentsContainer
