@@ -168,17 +168,17 @@ public class ManageStudents {
             studentButton.setForeground(Color.RED);
             studentButton.setFocusPainted(false);
             studentButton.setBorder(new LineBorder(Color.WHITE, 1, true)); // Rounded border
-            studentButton.addActionListener(new ActionListener() {
-                @Override
+            
+            actionstudentbutton = new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     client.deleteStudent(student.getIdEtudiant());
                     // Supprimer uniquement le panneau correspondant de studentsContainer
                     studentsContainer.remove(studentPanel);
                     studentsContainer.revalidate();
                     studentsContainer.repaint();
-            
                 }
-            });
+            };
+            studentButton.addActionListener(actionstudentbutton);
 
             GridBagConstraints gbcLabel = new GridBagConstraints();
             gbcLabel.gridx = 0;
