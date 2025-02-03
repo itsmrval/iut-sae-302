@@ -73,10 +73,25 @@ public class MenuActivity extends AppCompatActivity {
                 startActivity(intent_manage);
             }
         });
-        disconnectButton.setOnClickListener(new View.OnClickListener() {
+       disconnectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // A DEV
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                       try {
+                            client.closeResources();
+                       } catch (Exception e) {
+                           e.printStackTrace();
+                           Log.d("Client", "Erreur lors de la déconnexion");
+                       }
+                        Intent intent = new Intent(MenuActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
+
+                    }
+
+                }).start();
             }
         });
 
