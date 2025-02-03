@@ -94,3 +94,4 @@ public class ViewAttendanceActivity extends AppCompatActivity implements Attenda
             activity.runOnUiThread(updateRunnable);
         }
     }
+}
