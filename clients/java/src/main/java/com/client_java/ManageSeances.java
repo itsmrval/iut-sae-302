@@ -148,7 +148,7 @@ public class ManageSeances {
         validateButton.setForeground(Color.GREEN);
         validateButton.setFocusPainted(false);
         validateButton.setBorder(new LineBorder(Color.WHITE, 1, true));
-        validateButton.addActionListener(new ActionListener() {
+        ActionListener actionvalidatebutton = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String name = nameField.getText().trim(); // Trimmer les espaces pour le nom
                 Date selectedDate = dateChooser.getDate();
@@ -187,9 +187,11 @@ public class ManageSeances {
                     reloadMainPanel(mainPanel); // Recharger le panneau principal
                     cardLayout.show(cards, "mainPanel");
                 }           
-                                
+                                 
             }
-        });
+        };
+        validateButton.addActionListener(actionvalidatebutton);
+
         centerPanel.add(validateButton, gbcCenter);
 
         secondPanel.add(centerPanel, BorderLayout.CENTER);
@@ -238,17 +240,16 @@ public class ManageSeances {
             seanceButton.setForeground(Color.RED);
             seanceButton.setFocusPainted(false);
             seanceButton.setBorder(new LineBorder(Color.WHITE, 1, true)); // Rounded border
-            seanceButton.addActionListener(new ActionListener() {
-                @Override
+            ActionListener actiondelete = new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     client.deleteSeance(seance.getIdSeance());
                     // Supprimer uniquement le panneau correspondant de seancesContainer
                     seancesContainer.remove(seancePanel);
                     seancesContainer.revalidate();
                     seancesContainer.repaint();
-            
                 }
-            });
+            };
+            seanceButton.addActionListener(actiondelete);
 
             GridBagConstraints gbcLabel = new GridBagConstraints();
             gbcLabel.gridx = 0;
@@ -289,13 +290,13 @@ public class ManageSeances {
         buttonBack.setForeground(Color.WHITE);
         buttonBack.setFocusPainted(false);
         buttonBack.setBorder(new LineBorder(Color.WHITE, 1, true));
-        buttonBack.addActionListener(new ActionListener() {
+        ActionListener actionBack = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 frame.dispose();
                 connected.refreshSeances(); // Rafraîchir la liste des séances
-
             }
-        });
+        };
+        buttonBack.addActionListener(actionBack);
 
         GridBagConstraints gbcBack = new GridBagConstraints();
         gbcBack.insets = new Insets(10, 10, 10, 10);
@@ -311,11 +312,12 @@ public class ManageSeances {
         buttonCreateSeance.setForeground(Color.GREEN);
         buttonCreateSeance.setFocusPainted(false);
         buttonCreateSeance.setBorder(new LineBorder(Color.WHITE, 1, true));
-        buttonCreateSeance.addActionListener(new ActionListener() {
+        ActionListener actionCreateSeance = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 cardLayout.show(cards, "secondPanel");
             }
-        });
+        };
+        buttonCreateSeance.addActionListener(actionCreateSeance);
 
         GridBagConstraints gbcCreate = new GridBagConstraints();
         gbcCreate.insets = new Insets(10, 10, 10, 10);

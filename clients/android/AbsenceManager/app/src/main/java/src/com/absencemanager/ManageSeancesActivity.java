@@ -32,6 +32,7 @@ public class ManageSeancesActivity extends AppCompatActivity {
 
         Button newSeanceButton = findViewById(R.id.newSeanceButton);
 
+
         newSeanceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

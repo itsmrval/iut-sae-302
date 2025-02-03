@@ -69,7 +69,7 @@ public class Attendance {
         validateButton.setForeground(Color.GREEN);
         validateButton.setFocusPainted(false);
         validateButton.setBorder(new LineBorder(Color.WHITE, 1, true));
-        validateButton.addActionListener(new ActionListener() {
+        ActionListener validatelistener = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Vérifier l'état des cases à cocher et effectuer des actions en fonction de leur état
                 for (Map.Entry<Etudiant, JCheckBox> entry : studentCheckBoxMap.entrySet()) {
@@ -87,7 +87,8 @@ public class Attendance {
                 // Fermeture de la fenêtre actuelle
                 frame.dispose();
             }
-        });
+        };
+        validateButton.addActionListener(validatelistener);
 
         // Ajouter le bouton "Validate" à son panneau
         topLeftPanel.add(validateButton, BorderLayout.NORTH);

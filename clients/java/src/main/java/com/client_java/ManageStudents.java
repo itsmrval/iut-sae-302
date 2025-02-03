@@ -239,11 +239,12 @@ public class ManageStudents {
         buttonCreateStudent.setForeground(Color.GREEN);
         buttonCreateStudent.setFocusPainted(false);
         buttonCreateStudent.setBorder(new LineBorder(Color.WHITE, 1, true));
-        buttonCreateStudent.addActionListener(new ActionListener() {
+        ActionListener actionCreateStudent = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 cardLayout.show(cards, "secondPanel");
             }
-        });
+        };
+        buttonCreateStudent.addActionListener(actionCreateStudent);
 
         GridBagConstraints gbcCreate = new GridBagConstraints();
         gbcCreate.insets = new Insets(10, 10, 10, 10);

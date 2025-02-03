@@ -65,12 +65,12 @@ public class ViewAttendance {
         backButton.setForeground(Color.WHITE);
         backButton.setFocusPainted(false);
         backButton.setBorder(new LineBorder(Color.WHITE, 1, true));
-        backButton.addActionListener(new ActionListener() {
+        ActionListener backListener = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 frame.dispose();
             }
-        });
-
+        };
+        backButton.addActionListener(backListener);
         // Ajouter le bouton "Validate" à son panneau
         topLeftPanel.add(backButton, BorderLayout.NORTH);
 
