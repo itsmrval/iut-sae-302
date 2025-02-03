@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.List;
 
-public class ViewAttendanceActivity extends AppCompatActivity implements com.absence.manager.AttendanceCallback {
+public class ViewAttendanceActivity extends AppCompatActivity implements AttendanceCallback {
 
     private Client client;
     private ListView studentsListView;
