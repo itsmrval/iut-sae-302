@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "network.h"
-#include "display.h"
 #include "handlers.h"
 
 void display_title(const char* title);
@@ -22,8 +21,7 @@ int main(int argc, char *argv[]) {
         display_title("Main Menu");
         printf("1. Manage seances\n");
         printf("2. Manage students\n");
-        printf("3. Attendance\n");
-        printf("4. Exit\n");
+        printf("3. Exit\n");
         printf("Choice: ");
         
         int choice;
@@ -38,9 +36,6 @@ int main(int argc, char *argv[]) {
                 handle_student_management(ssl);
                 break;
             case 3:
-                handle_attendance_management(ssl);
-                break;
-            case 4:
                 goto cleanup;
             default:
                 printf("Invalid choice\n");

@@ -16,7 +16,7 @@ endif
 
 DIST_DIR = ../../dist/client_c
 
-SRCS = src/main.c src/display.c src/handlers.c src/network.c
+SRCS = src/main.c src/handlers.c src/network.c
 OBJS = $(SRCS:src/%.c=$(DIST_DIR)/%.o)
 EXEC = $(DIST_DIR)/client
 OPENSSL_DIR = ../../openssl/ssl
