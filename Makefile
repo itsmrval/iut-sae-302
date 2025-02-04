@@ -52,7 +52,7 @@ move_apk:
 		echo "APK not found at $(APK_PATH)"; \
 	fi
 	rm -rf ./clients/android/build/
-	#rm -rf ./clients/android/app/build/
+	rm -rf ./clients/android/app/build/
 
 
 .PHONY: all backend client_c client_java client_android run_android clean move_apk
