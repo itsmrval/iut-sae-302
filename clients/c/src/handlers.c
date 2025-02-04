@@ -91,6 +91,7 @@ void handle_seance_management(SSL* ssl) {
             int id;
             scanf("%d", &id);
             getchar();
+
             
             snprintf(buffer, sizeof(buffer), "<d>seance/%d", id);
             ssl_send_receive(ssl, buffer, response, sizeof(response));
@@ -102,5 +103,39 @@ void handle_seance_management(SSL* ssl) {
 }
 
 void handle_attendance_management(SSL* ssl) {
-// TODO: Implement this function
+    char buffer[BUFFER_SIZE];
+    char response[BUFFER_SIZE];
+    int choice = 0;
+    
+    while (choice != 1) {
+        ssl_send_receive(ssl, "<g>seance", response, sizeof(response));
+        display_attendance_list(response);
+
+        scanf("%d", &choice);
+        getchar();
+
+    if (choice == 2) {
+        printf("Enter seance id: ");
+        int id;
+        scanf("%d", &id);
+        getchar();
+        
+        printf("Enter student id: ");
+        int student_id;
+        scanf("%d", &student_id);
+        getchar();
+
+        printf("Enter attendance status (1: present, 0: absent): ");
+        int status;
+        scanf("%d", &status);
+        getchar();
+
+        snprintf(buffer, sizeof(buffer), "<p>attendance/%d/%d/%d", id, student_id, status);
+        ssl_send_receive(ssl, buffer, response, sizeof(response));
+        display_attendance_list(response);
+    }
+    }
+
+    
+
 }
