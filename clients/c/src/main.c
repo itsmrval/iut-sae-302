@@ -14,8 +14,12 @@ int main(int argc, char *argv[]) {
     const char* hostname = argv[1];
     int port = atoi(argv[2]);
     const char* cert_file = argv[3];
+    printf("Connecting to %s:%d\n", hostname, port);
     
     SSL* ssl = setup_ssl_connection(hostname, port, cert_file);
+    if (!ssl) {
+        exit(EXIT_FAILURE);
+    }
     
     while (1) {
         display_title("Main Menu");
