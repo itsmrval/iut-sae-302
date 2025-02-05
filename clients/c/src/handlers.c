@@ -4,7 +4,6 @@
 #include <time.h>
 
 // Inclusion des fichiers d'en-tête pour les gestionnaires et le réseau.
-
 #include "handlers.h"
 #include "network.h"
 
