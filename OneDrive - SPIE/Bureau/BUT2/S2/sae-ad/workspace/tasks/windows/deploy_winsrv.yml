@@ -1,0 +1,24 @@
+
+- name: Check if VM exists
+  shell: qm list | awk '$1 == "{{ vm_id }}" {exit 0} END {exit 1}'
+  register: vm_exists
+  failed_when: false
+  changed_when: false
+
+- name: Get template path
+  shell: pveam list | awk '$2 == "{{ template_vmid }}" {print $1}'
+  register: template_path
+  when: vm_exists.rc != 0
+  changed_when: false
+
+- name: Clone VM from template
+  shell: |
+    qm clone "{{ template_vmid }}" "{{ vm_id }}" \
+    --name "{{ vm_name }}" \
+    --storage "local" \
+    --full true
+  when: vm_exists.rc != 0
+
+- name: Start VM
+  shell: qm start "{{ vm_id }}"
+  when: vm_exists.rc != 0

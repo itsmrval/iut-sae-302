@@ -1,0 +1,28 @@
+---
+- name: playbook_WindowsSRV
+  hosts: proxmox_node
+  gather_facts: no
+
+  tasks:
+
+    - name: Debug proxmox_user
+      debug:
+        msg: "Proxmox User is {{ proxmox_user }}"
+
+
+  # Deploy windows server 2016
+    - name: deploy_winsrv_2016
+      import_tasks: tasks/windows/deploy_winsrv.yml
+      vars:
+        vm_id: "{{ vm_id_2016 }}"
+        vm_name: "{{ vm_name_2016 }}"
+        template_vmid: "{{ template_vmid_2016 }}"
+        
+  # Deploy windows server 2012
+    - name: deploy_winsrv_2012
+      import_tasks: tasks/windows/deploy_winsrv.yml
+      vars:
+        vm_id: "{{ vm_id_2012 }}"
+        vm_name: "{{ vm_name_2012 }}"
+        template_vmid: "{{ template_vmid_2012 }}"
+

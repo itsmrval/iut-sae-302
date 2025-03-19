@@ -1,0 +1,16 @@
+---
+proxmox_node: "{{ inventory_hostname }}"
+proxmox_host: "192.168.49.182"
+proxmox_user: "etudiant@pam"
+proxmox_token_name: "deploy"
+proxmox_token_value: "74c566f8-fea2-48f8-a5d7-7b6f5239759c"
+
+#WinSrv2012
+vm_id_2012: 500
+vm_name_2012: "TESTWinSrv2012"
+template_vmid_2012: 101
+
+#WinSrv2016
+vm_id_2016: 550
+vm_name_2016: "TESTWinSrv2016"
+template_vmid_2016: 105
